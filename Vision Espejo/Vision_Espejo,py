@@ -2,7 +2,7 @@
  * file Vision-Espejo.py
  * author Jared Aldana Palacios 
  * brief Source file for the OpenMV
- * date 2026-02-12
+ * date 2026-02-16
 '''
 
 import sensor
@@ -17,8 +17,8 @@ UART_BAUDRATE = 115200
 
 
 THRESHOLD_BALL = (23, 93, 20, 83, 87, -4)     
-THRESHOLD_YELLOW_GOAL = (12, 18, 5, -9, -14, -3)  
-THRESHOLD_BLUE_GOAL = (30, 63, -11, 8, 38, 15)  
+THRESHOLD_OWN_GOAL = (12, 18, 5, -9, -14, -3)  
+THRESHOLD_RIVAL_GOAL = (30, 63, -11, 8, 38, 15)  
 
 # Reference center of the robot (Adjust to the center of the mirror)
 X_CENTER = 144
@@ -35,13 +35,13 @@ MINIMUN_FAR_AREA = 4
 
 # Dead zones to avoid vibrations (in degrees)
 BALL_DEAD_ZONE = 5.0
-BLUE_GOAL_DEAD_ZONE = 20.0
-YELLOW_GOAL_DEAD_ZONE = 5.0
+RIVAL_GOAL_DEAD_ZONE = 20.0
+OWN_GOAL_DEAD_ZONE = 5.0
 
 # Distance adjustments when object is far behind (>135° or <-135°)
 BALL_DISTANCE_CORRECTION = 10.0
-YELLOW_GOAL_DISTANCE_CORRECTION = -30.0
-YELLOW_GOAL_MIN_DISTANCE = 10.0
+OWN_GOAL_DISTANCE_CORRECTION = -30.0
+OWN_GOAL_MIN_DISTANCE = 10.0
 
 
 
@@ -109,13 +109,14 @@ def find_ball(img):
         # Prioritize larger blobs and those closer to the center
         blobs = sorted(
             blobs,
-            key=lambda BLOBS: (BLOBS.area(), -calculate_distance(BLOBS)),
+            key=lambda b: (b.area(), -calculate_distance(b)),
             reverse=True
         )
         
         for blob in blobs:
             area = blob.area()
-            circularity = blob.compactness()
+            #circularity= blob.compactness()
+            circularity = blob.roundness()
             
             # Near ball
             if area >= MINIMUN_CLOSE_AREA and circularity > 0.3:
@@ -140,10 +141,10 @@ def find_ball(img):
     
     return valid_blobs
 
-def find_blue_goal(img):
+def find_rival_goal(img):
 
     blobs = img.find_blobs(
-        [THRESHOLD_BLUE_GOAL],
+        [THRESHOLD_RIVAL_GOAL],
         pixels_threshold=GOAL_PIXELS_THRESHOLD,
         area_threshold=GOAL_AREA_THRESHOLD,
         merge=True
@@ -155,10 +156,10 @@ def find_blue_goal(img):
     
     return blobs
 
-def find_yellow_goal(img):
+def find_own_goal(img):
 
     blobs = img.find_blobs(
-        [THRESHOLD_YELLOW_GOAL],
+        [THRESHOLD_OWN_GOAL],
         pixels_threshold=GOAL_PIXELS_THRESHOLD,
         area_threshold=GOAL_AREA_THRESHOLD,
         merge=True
@@ -214,10 +215,10 @@ def main():
     
     ball_distance = 0.0
     ball_angle = 0.0
-    blue_goal_distance = 0.0
-    blue_goal_angle = 0.0
-    yellow_goal_distance = 0.0
-    yellow_goal_angle = 0.0
+    rival_goal_distance = 0.0
+    rival_goal_angle = 0.0
+    own_goal_distance = 0.0
+    own_goal_angle = 0.0
     
     clock = time.clock()
     
@@ -247,50 +248,50 @@ def main():
             ball_distance = 0.0
             ball_angle = 0.0
         
-        # BLUE GOAL DETECTION 
-        blue_goal_blobs = find_blue_goal(img)
-        if blue_goal_blobs:
-            blob = blue_goal_blobs[0]
-            blue_goal_distance = calculate_distance(blob)
-            blue_goal_angle = calculate_angle(blob)
+        # RIVAL GOAL DETECTION 
+        rival_goal_blobs = find_rival_goal(img)
+        if rival_goal_blobs:
+            blob = rival_goal_blobs[0]
+            rival_goal_distance = calculate_distance(blob)
+            rival_goal_angle = calculate_angle(blob)
             
-            blue_goal_angle = apply_dead_zone(
-                blue_goal_angle, 
-                BLUE_GOAL_DEAD_ZONE
+            rival_goal_angle = apply_dead_zone(
+                rival_goal_angle, 
+                RIVAL_GOAL_DEAD_ZONE
             )
         else:
-            blue_goal_distance = 0.0
-            blue_goal_angle = 0.0
+            rival_goal_distance = 0.0
+            rival_goal_angle = 0.0
         
-        # YELLOW GOAL DETECTION 
-        yellow_goal_blobs = find_yellow_goal(img)
-        if yellow_goal_blobs:
-            blob = yellow_goal_blobs[0]
-            yellow_goal_distance = calculate_distance(blob)
-            yellow_goal_angle = calculate_angle(blob)
+        # OWN GOAL DETECTION 
+        own_goal_blobs = find_own_goal(img)
+        if own_goal_blobs:
+            blob = own_goal_blobs[0]
+            own_goal_distance = calculate_distance(blob)
+            own_goal_angle = calculate_angle(blob)
             
-            yellow_goal_angle = apply_dead_zone(yellow_goal_angle, YELLOW_GOAL_DEAD_ZONE)
+            own_goal_angle = apply_dead_zone(own_goal_angle, OWN_GOAL_DEAD_ZONE)
             
-            yellow_goal_distance = correct_distance(
-                yellow_goal_distance,
-                yellow_goal_angle,
-                YELLOW_GOAL_DISTANCE_CORRECTION
+            own_goal_distance = correct_distance(
+                own_goal_distance,
+                own_goal_angle,
+                OWN_GOAL_DISTANCE_CORRECTION
             )
             
-            if yellow_goal_distance < YELLOW_GOAL_MIN_DISTANCE:
-                yellow_goal_distance = YELLOW_GOAL_MIN_DISTANCE
+            if own_goal_distance < OWN_GOAL_MIN_DISTANCE:
+                own_goal_distance = OWN_GOAL_MIN_DISTANCE
         else:
-            yellow_goal_distance = 0.0
-            yellow_goal_angle = 0.0
+            own_goal_distance = 0.0
+            own_goal_angle = 0.0
         
         # SEND DATA VIA UART 
         data = "{:.1f} {:.1f} {:.1f} {:.1f} {:.1f} {:.1f}\n".format(
             ball_distance,
             ball_angle,
-            blue_goal_distance,
-            blue_goal_angle,
-            yellow_goal_distance,
-            yellow_goal_angle
+            rival_goal_distance,
+            rival_goal_angle,
+            own_goal_distance,
+            own_goal_angle
         )
         
         print("Sending:", data.strip())

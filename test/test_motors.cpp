@@ -15,13 +15,15 @@
 
 
 const uint8_t Speed = 80; //Robot speedbase
+
 void setup() {
+  
   Serial.begin(115200);
   Serial1.begin(115200);
   Serial2.begin(115200);
   motorss.InitializeMotors();
   Serial.println("Motors initialized");
-  //motorss.SetAllSpeeds(Speed);  // Set default speed after init
+  motorss.SetAllSpeeds(Speed);  // Set default speed after init
   
 }
 
@@ -51,7 +53,7 @@ void loop() {
   //motorss.StopMotors();
   //motorss.MoveLeft();
   //motorss.MoveMotors(0, Speed);
-  motorss.MoveMotorsImu(80, Speed, 0);
+  //motorss.MoveMotorsImu(80, Speed, 0);
 
 }
 

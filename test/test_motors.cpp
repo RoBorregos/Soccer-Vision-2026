@@ -14,7 +14,7 @@
 
 
 
-const uint8_t Speed = 80; //Robot speedbase
+const uint8_t Speed = 120; //Robot speedbase - reduced for testing
 
 void setup() {
   
@@ -23,7 +23,7 @@ void setup() {
   Serial2.begin(115200);
   motorss.InitializeMotors();
   Serial.println("Motors initialized");
-  motorss.SetAllSpeeds(Speed);  // Set default speed after init
+  motorss.SetAllSpeeds(Speed);
   
 }
 
@@ -53,7 +53,7 @@ void loop() {
   //motorss.StopMotors();
   //motorss.MoveLeft();
   //motorss.MoveMotors(0, Speed);
-  //motorss.MoveMotorsImu(80, Speed, 0);
+  motorss.MoveMotorsImu(-90, Speed, 0);
 
 }
 

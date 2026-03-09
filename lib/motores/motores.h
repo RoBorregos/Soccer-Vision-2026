@@ -8,10 +8,10 @@
 class Motors
 {
 public:
-    Motor motor1;
-    Motor motor2;
-    Motor motor3;
-    Motor motor4;
+    Motor front_left;
+    Motor front_right;
+    Motor back_right;
+    Motor back_left;
 
     Motors(uint8_t speed1, uint8_t in1_1, uint8_t in2_1,
            uint8_t speed2, uint8_t in1_2, uint8_t in2_2,
@@ -32,8 +32,7 @@ public:
     void MoveMotor4();
     void MoveMotors(int degree, uint8_t speed);
     void GetAllSpeeds();
-    void MoveOneMotor(uint8_t motor, uint8_t speed);
-    void MoveMotorsImu(double target_angle, uint8_t speed, double speed_w);
+    void MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_output);
 };
 
 #endif

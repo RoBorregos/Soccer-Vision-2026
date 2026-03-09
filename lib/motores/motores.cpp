@@ -7,27 +7,27 @@ Motors::Motors(uint8_t pwm_pin1, uint8_t in1_1, uint8_t in2_1,
                uint8_t pwm_pin2, uint8_t in1_2, uint8_t in2_2,
                uint8_t pwm_pin3, uint8_t in1_3, uint8_t in2_3,
                uint8_t pwm_pin4, uint8_t in1_4, uint8_t in2_4)
-: motor1(pwm_pin1, in1_1, in2_1),
-  motor2(pwm_pin2, in1_2, in2_2),
-  motor3(pwm_pin3, in1_3, in2_3),
-  motor4(pwm_pin4, in1_4, in2_4)
+: front_left(pwm_pin1, in1_1, in2_1),
+  front_right(pwm_pin2, in1_2, in2_2),
+  back_right(pwm_pin3, in1_3, in2_3),
+  back_left(pwm_pin4, in1_4, in2_4)
 {}
 
 void Motors::InitializeMotors()
 {
     Serial.println("Inicializando motores...");
-    motor1.InitializeMotor();
-    motor2.InitializeMotor();
-    motor3.InitializeMotor();
-    motor4.InitializeMotor();
+    front_left.InitializeMotor();
+    front_right.InitializeMotor();
+    back_right.InitializeMotor();
+    back_left.InitializeMotor();
 }
 
 void Motors::SetAllSpeeds(uint8_t speed)
 {
-    motor1.SetSpeed(speed);
-    motor2.SetSpeed(speed);
-    motor3.SetSpeed(speed);
-    motor4.SetSpeed(speed);
+    front_left.SetSpeed(speed);
+    front_right.SetSpeed(speed);
+    back_right.SetSpeed(speed);
+    back_left.SetSpeed(speed);
 }
 
 void Motors::GetAllSpeeds()
@@ -35,100 +35,62 @@ void Motors::GetAllSpeeds()
     // OJO: ahora ya no existe GetSpeed() (porque era confuso).
     // Si quieres imprimir algo útil, imprime el pin PWM:
     Serial.print("Motor 1 PWM pin: ");
-    Serial.println(motor1.GetPwmPin());
+    Serial.println(front_left.GetPwmPin());
     Serial.print("Motor 2 PWM pin: ");
-    Serial.println(motor2.GetPwmPin());
+    Serial.println(front_right.GetPwmPin());
     Serial.print("Motor 3 PWM pin: ");
-    Serial.println(motor3.GetPwmPin());
+    Serial.println(back_right.GetPwmPin());
     Serial.print("Motor 4 PWM pin: ");
-    Serial.println(motor4.GetPwmPin());
+    Serial.println(back_left.GetPwmPin());
 }
 
 void Motors::StopMotors()
 {
-    motor1.StopMotor();
-    motor2.StopMotor();
-    motor3.StopMotor();
-    motor4.StopMotor();
+    front_left.StopMotor();
+    front_right.StopMotor();
+    back_right.StopMotor();
+    back_left.StopMotor();
 }
 
 void Motors::MoveForward()
 {
-    motor1.MoveForward();
-    motor2.MoveForward();
-    motor3.MoveBackward();
-    motor4.MoveBackward();
+    front_left.MoveForward();
+    front_right.MoveForward();
+    back_right.MoveBackward();
+    back_left.MoveBackward();
 }
 
 void Motors::MoveRight()
 {
-    motor1.MoveForward();
-    motor2.MoveBackward();
-    motor3.MoveBackward();
-    motor4.MoveForward();
+    front_left.MoveForward();
+    front_right.MoveBackward();
+    back_right.MoveBackward();
+    back_left.MoveForward();
 }
 
 void Motors::MoveLeft()
 {
-    motor1.MoveBackward();
-    motor2.MoveForward();
-    motor3.MoveForward();
-    motor4.MoveBackward();
+    front_left.MoveBackward();
+    front_right.MoveForward();
+    back_right.MoveForward();
+    back_left.MoveBackward();
 }
 
 void Motors::MoveBackward()
 {
-    motor1.MoveBackward();
-    motor2.MoveBackward();
-    motor3.MoveForward();
-    motor4.MoveForward();
+    front_left.MoveBackward();
+    front_right.MoveBackward();
+    back_right.MoveForward();
+    back_left.MoveForward();
 }
 
-void Motors::MoveMotor1() { motor1.MoveForward(); }
-void Motors::MoveMotor2() { motor2.MoveForward(); }
-void Motors::MoveMotor3() { motor3.MoveForward(); }
-void Motors::MoveMotor4() { motor4.MoveForward(); }
+void Motors::MoveMotor1() { front_left.MoveForward(); }
+void Motors::MoveMotor2() { front_right.MoveForward(); }
+void Motors::MoveMotor3() { back_right.MoveForward(); }
+void Motors::MoveMotor4() { back_left.MoveForward(); }
 
-void Motors::MoveMotors(int degree, uint8_t speed)
-{
-    degree = degree + 90; // Ajuste para que 0° sea hacia adelante
-    // MoveMotors
-    //float m1 = cos((318.0  + degree) * PI / 180);
-    //float m2 = cos((42 + degree) * PI / 180);
-    //float m3 = cos((138 + degree) * PI / 180);
-    //float m4 = cos((222 + degree) * PI / 180);
 
-    
-
-    float m1 = cos(322.5 * PI / 180); // +0.793  → Forward ✓
-    float m2 = cos(37.5 * PI / 180);  // +0.793  → Forward ✓
-    float m3 = cos(142.5 * PI / 180); // -0.793  → Backward ✓
-    float m4 = cos(217.5 * PI / 180); // -0.793  → Backward ✓
-
-    int speedA = abs(int(m1 * speed));
-    int speedB = abs(int(m2 * speed));
-    int speedC = abs(int(m3 * speed));
-    int speedD = abs(int(m4 * speed));
-
-    speedA = constrain(speedA, 0, 255);
-    speedB = constrain(speedB, 0, 255);
-    speedC = constrain(speedC, 0, 255);
-    speedD = constrain(speedD, 0, 255);
-
-    // Puedes usar analogWrite con el pin:
-    analogWrite(motor1.GetPwmPin(), speedA);
-    analogWrite(motor2.GetPwmPin(), speedB);
-    analogWrite(motor3.GetPwmPin(), speedC);
-    analogWrite(motor4.GetPwmPin(), speedD);
-
-    // Dirección según signo
-    (m1 >= 0) ? motor1.MoveForward() : motor1.MoveBackward();
-    (m2 >= 0) ? motor2.MoveForward() : motor2.MoveBackward();
-    (m3 >= 0) ? motor3.MoveForward() : motor3.MoveBackward();
-    (m4 >= 0) ? motor4.MoveForward() : motor4.MoveBackward();
-}
-
-void Motors::MoveMotorsImu(double degree, uint8_t speed, double w)
+void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_output)
 {
     //degree = degree + 90; // Ajuste para que 0° sea hacia adelante
 
@@ -137,10 +99,10 @@ void Motors::MoveMotorsImu(double degree, uint8_t speed, double w)
     float t3 = cos((142.5 + degree) * PI / 180) * speed; // -0.793  → Backward ✓
     float t4 = cos((217.5 + degree) * PI / 180) * speed; // -0.793  → Backward ✓
 
-    float m1 = t1 + w;
-    float m2 = t2 - w;
-    float m3 = t3 + w;
-    float m4 = t4 - w;  
+    float m1 = t1 + pid_output;
+    float m2 = t2 - pid_output;
+    float m3 = t3 + pid_output;
+    float m4 = t4 - pid_output;  
     
     
 
@@ -150,14 +112,14 @@ void Motors::MoveMotorsImu(double degree, uint8_t speed, double w)
     int speedC = constrain(abs((int)m3), 0, 255);
     int speedD = constrain(abs((int)m4), 0, 255);
 
-    motor1.SetSpeed(speedA);
-    motor2.SetSpeed(speedB);
-    motor3.SetSpeed(speedC);
-    motor4.SetSpeed(speedD);
+    front_left.SetSpeed(speedA);
+    front_right.SetSpeed(speedB);
+    back_right.SetSpeed(speedC);
+    back_left.SetSpeed(speedD);
 
-    (m1 >= 0) ? motor1.MoveForward() : motor1.MoveBackward();
-    (m2 >= 0) ? motor2.MoveForward() : motor2.MoveBackward();
-    (m3 >= 0) ? motor3.MoveForward() : motor3.MoveBackward();
-    (m4 >= 0) ? motor4.MoveForward() : motor4.MoveBackward();
+    (m1 >= 0) ? front_left.MoveForward() : front_left.MoveBackward();
+    (m2 >= 0) ? front_right.MoveForward() : front_right.MoveBackward();
+    (m3 >= 0) ? back_right.MoveForward() : back_right.MoveBackward();
+    (m4 >= 0) ? back_left.MoveForward() : back_left.MoveBackward();
 }
 //Lanta 1 esta girando mal

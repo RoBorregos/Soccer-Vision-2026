@@ -1,5 +1,5 @@
-#ifndef PHOTOMUX_H
-#define PHOTOMUX_H
+#ifndef PHOTOSENSORSMUX_H
+#define PHOTOSENSORSMUX_H
 
 #include <Arduino.h>
 

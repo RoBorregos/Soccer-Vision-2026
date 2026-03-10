@@ -27,5 +27,3 @@ PhotoMux::Sensor front[] = {
   {0, 41},
   {0, 20}
 };
-
-const uint8_t FRONT_COUNT = sizeof(front) / sizeof(front[0]);

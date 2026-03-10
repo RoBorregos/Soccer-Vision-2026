@@ -11,11 +11,24 @@ double current_yaw = 0.0; //Current angle
 double last_speed_w = 0.0; //No use for now
 const uint8_t Speed = 120; //Robot speedbase
 
+// ── Phototransistor pin definitions ───────────────────────────────────────────
+const uint8_t FRONT_PINS[] = {39, 40, 41, 20}; // ADDED: direct front pins
+const uint8_t LEFT_PINS[]  = {27, 26, 38};
+const uint8_t RIGHT_PINS[] = {22, 23, 17};
+const uint8_t FRONT_COUNT  = 4;                 // ADDED: front pin count
+const uint8_t LEFT_COUNT   = 3;
+const uint8_t RIGHT_COUNT  = 3;
 
+const int FRONT_THRESHOLD = 2900; // CHANGED: tuned for squared-mean formula (was 3500)
+const int LEFT_THRESHOLD  = 2100;
+const int RIGHT_THRESHOLD = 6000;
+
+enum LineSide { LINE_NONE, LINE_FRONT, LINE_LEFT, LINE_RIGHT, LINE_BOTH_SIDES };
 
 unsigned long lineDetectedTime = 0;
 
 bool isAvoidingLine = false;
+LineSide detectedLineSide = LINE_NONE;
 
 //For Ball control
 float temp_ang = 0;
@@ -25,6 +38,16 @@ bool front_ball_seen = false;
 bool front_goal_seen = false;
 bool mirror_ball_seen = false;
 bool mirror_goal_seen = false;
+
+bool isLineDetectedDirect(const uint8_t* pins, uint8_t count, int threshold) {
+  long sum = 0;
+  for (uint8_t i = 0; i < count; i++) {
+    int v = analogRead(pins[i]);
+    sum += (long)v * v;
+  }
+  float avg = sum / float(count);
+  return avg > threshold;
+}
 
 void mirror_angle_section(double ang, uint8_t speed, double speed_w) {
   if (abs(ang) > 145.0f) {
@@ -78,15 +101,33 @@ void desired_ang_goal(float g_ang, float b_ang, uint8_t speed, double speed_w) {
 }
 
 void checkLineSensors() {
-  bool frontDetected = photoMux.isLineDetected(FRONT);
+  bool frontDetected = isLineDetectedDirect(FRONT_PINS, FRONT_COUNT, FRONT_THRESHOLD); // CHANGED: replaced photoMux call
+  bool leftDetected  = isLineDetectedDirect(LEFT_PINS,  LEFT_COUNT,  LEFT_THRESHOLD);
+  bool rightDetected = isLineDetectedDirect(RIGHT_PINS, RIGHT_COUNT, RIGHT_THRESHOLD);
 
-  if (frontDetected) {
+  if (frontDetected || leftDetected || rightDetected) {
     lineDetectedTime = millis();
-    isAvoidingLine = true;
-    Serial.println("LINE DETECTED");
+    isAvoidingLine   = true;
+
+    if (leftDetected && rightDetected) {
+      detectedLineSide = LINE_BOTH_SIDES;
+      Serial.println("LINE DETECTED: BOTH SIDES -> Moving backward");
+    } else if (frontDetected) {
+      detectedLineSide = LINE_FRONT;
+      Serial.println("LINE DETECTED: FRONT -> Moving backward");
+      Serial.println(photoMux.getAverage(FRONT));
+    } else if (leftDetected) {
+      detectedLineSide = LINE_LEFT;
+      Serial.println("LINE DETECTED: LEFT -> Moving right");
+    } else if (rightDetected) {
+      detectedLineSide = LINE_RIGHT;
+      Serial.println("LINE DETECTED: RIGHT -> Moving left");
+    }
+
   } else if (isAvoidingLine) {
     if (millis() - lineDetectedTime >= correctionTime) {
-      isAvoidingLine = false;
+      isAvoidingLine   = false;
+      detectedLineSide = LINE_NONE;
       Serial.println("LINE ESCAPE END");
     }
   }
@@ -146,8 +187,23 @@ void loop() {
 
   if (isAvoidingLine) {
     // LINE AVOIDANCE — overrides everything
-    motorss.SetAllSpeeds(Speed);
-    motorss.MoveBackward();
+    motorss.SetAllSpeeds(120);
+
+    switch (detectedLineSide) {
+      case LINE_FRONT:
+      case LINE_BOTH_SIDES:
+        motorss.MoveBackward();
+        break;
+      case LINE_LEFT:
+        motorss.MoveOmnidirectionalBase(90, 120, speed_w);
+        break;
+      case LINE_RIGHT:
+        motorss.MoveOmnidirectionalBase(-90, 120, speed_w);
+        break;
+      default:
+        motorss.MoveBackward();
+        break;
+    }
 
   } else {
     // ── Normal movement logic ─────────────────────────────────────────────
@@ -162,6 +218,8 @@ void loop() {
 
     } else {
       // Ball NOT in front range — search / approach
+
+      Serial.println(frontCam.ball_seen);
 
       if (front_ball_seen) {
         // Ball visible from front camera
@@ -205,7 +263,6 @@ void loop() {
         }
       }
     }
-
   }
 
   delay(20);

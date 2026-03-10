@@ -14,7 +14,7 @@
 
 
 
-const uint8_t Speed = 120; //Robot speedbase - reduced for testing
+const uint8_t Speed = 0; //Robot speedbase - reduced for testing
 
 void setup() {
   
@@ -42,7 +42,7 @@ void loop() {
   //motorss.MoveMotor4();
   //delay(1000);
   //motorss.StopMotors();
-  //motorss.MoveForward();
+  motorss.MoveForward();
   //delay(1000);
   //motorss.StopMotors();
   //motorss.MoveBackward();
@@ -53,7 +53,7 @@ void loop() {
   //motorss.StopMotors();
   //motorss.MoveLeft();
   //motorss.MoveMotors(0, Speed);
-  motorss.MoveMotorsImu(-90, Speed, 0);
+  //motorss.MoveMotorsImu(-90, Speed, 0);
 
 }
 

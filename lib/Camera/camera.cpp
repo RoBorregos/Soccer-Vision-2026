@@ -11,6 +11,10 @@ camera::camera(HardwareSerial& serial, bool isMirror)
 }
 
 void camera::read() {
+    ball_seen = false;
+    goal_seen = false;
+    own_seen = false;
+    
     while (_serial.available()) {
     char c = (char)_serial.read();
     if (c == '\r') continue;
@@ -32,6 +36,9 @@ void camera::process(const String& line) {
     ball_distance = dist;   ball_angle = ang;
     goal_distance = g_dist; goal_angle = g_ang;
     own_distance  = o_dist; own_angle  = o_ang;
+    if (ball_distance > 0) ball_seen = true;
+    if (goal_distance > 0) goal_seen = true;
+    if (own_distance > 0) own_seen = true;
 
     if (_isMirror) {
       goal_angle += 25.0f;

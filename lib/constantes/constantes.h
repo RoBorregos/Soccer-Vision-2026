@@ -37,7 +37,6 @@ const int servo_min = 1000;
 const int servo_mid = 1300;
 const int servo_max = 1600;
 
-const int FRONT_THRESHOLD = 6000000;
 const unsigned long correctionTime = 250;
 
 #endif

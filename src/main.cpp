@@ -1,25 +1,30 @@
 #include <Arduino.h>
 #include "RoboInstances.h"
 
+//Variables for time management and PID
 unsigned long current_time;
 unsigned long last_time = 0;
-bool side = true;
-
 float setpoint = 0.0f; //Target angle for PID
 double last_valid_yaw = 0.0;
 double current_yaw = 0.0; //Current angle
 double last_speed_w = 0.0; //No use for now
+
+//variables for moving side to side when ball is not seen
+bool side = true; //true for right, false for left
+
+
+//Variables for Motor control
 const uint8_t Speed = 120; //Robot speedbase
 
-// ── Phototransistor pin definitions ───────────────────────────────────────────
-const uint8_t FRONT_PINS[] = {39, 40, 41, 20}; // ADDED: direct front pins
-const uint8_t LEFT_PINS[]  = {27, 26, 38};
+// ── Phototransistor pin definitions 
+const uint8_t FRONT_PINS[] = {39, 40, 41, 20};
 const uint8_t RIGHT_PINS[] = {22, 23, 17};
-const uint8_t FRONT_COUNT  = 4;                 // ADDED: front pin count
+const uint8_t FRONT_COUNT  = 4;
 const uint8_t LEFT_COUNT   = 3;
 const uint8_t RIGHT_COUNT  = 3;
 
-const int FRONT_THRESHOLD = 2900; // CHANGED: tuned for squared-mean formula (was 3500)
+//Variables for avoiding the lines
+const int FRONT_THRESHOLD = 2900; 
 const int LEFT_THRESHOLD  = 2100;
 const int RIGHT_THRESHOLD = 6000;
 
@@ -30,7 +35,10 @@ unsigned long lineDetectedTime = 0;
 bool isAvoidingLine = false;
 LineSide detectedLineSide = LINE_NONE;
 
-//For Ball control
+
+
+
+//Variable for angle control in different game situations 
 float temp_ang = 0;
 
 // Camera boolean states
@@ -39,6 +47,8 @@ bool front_goal_seen = false;
 bool mirror_ball_seen = false;
 bool mirror_goal_seen = false;
 
+
+//This function reads the phototransistor values directly and determines if a line is detected based on the average of the squared readings compared to a threshold. This method is more efficient than using the PhotoMux class and provides a more direct way to check for line detection.
 bool isLineDetectedDirect(const uint8_t* pins, uint8_t count, int threshold) {
   long sum = 0;
   for (uint8_t i = 0; i < count; i++) {
@@ -49,7 +59,9 @@ bool isLineDetectedDirect(const uint8_t* pins, uint8_t count, int threshold) {
   return avg > threshold;
 }
 
-void mirror_angle_section(double ang, uint8_t speed, double speed_w) {
+//This function is DEADCODE (for now) 
+//It was intended to move the robot using the mirror
+void mirror_angle_section(double ang, uint8_t speed, double speed_w) { //Deadcpe for now, but might be useful for future improvements
   if (abs(ang) > 145.0f) {
     if (ang > 0) {
       motorss.MoveOmnidirectionalBase(180, speed, speed_w);
@@ -65,9 +77,11 @@ void mirror_angle_section(double ang, uint8_t speed, double speed_w) {
   }
 }
 
+//This function checks if the ball is close and infront of the robot, to start different strategies
+//It uses the aproximate distance and the angle to determine this
 bool isBallFront() {
   if (front_ball_seen) {
-    if (frontCam.ball_distance < 42 && abs(frontCam.ball_angle) < 30) {
+    if (frontCam.ball_distance < 42 && abs(frontCam.ball_angle) < 35) {
       return true;
     } else {
       return false;
@@ -77,28 +91,30 @@ bool isBallFront() {
   }
 }
 
-void desired_ang_goal(float g_ang, float b_ang, uint8_t speed, double speed_w) {
+//This function is used, to check if the ball and the goal are aligned, if they are not it tries to align them
+//After the alignement, it uses temp_ang to move the robot towards the ball while multyplying to make a slight curve
+void desired_ang_goal(float g_ang, float b_ang, uint8_t speed, double speed_w, double b_distance) {
   //If ang goal is positive (right)
   if (g_ang > 0) {
     if (b_ang < 0) { //Check if goal angle and ball angle are aligned
-      temp_ang = b_ang - 40;
-      motorss.MoveOmnidirectionalBase(temp_ang, speed, speed_w);
+      temp_ang = b_ang - (b_distance * 0.2); //If not, adjust temp_ang based on ball distance
     } else {
-      temp_ang = b_ang * 1.15;
+      temp_ang = b_ang +  (b_distance * 0.1); //If aligned, adjust temp_ang based on ball distance
       bno.SetTarget(15);
     }
   }
   //If ang goal is negative (left)
   if (g_ang < 0) {
     if (b_ang > 0) {
-      temp_ang = b_ang + 30;
-      motorss.MoveOmnidirectionalBase(temp_ang, speed, speed_w);
+      temp_ang = b_ang + (b_distance * 0.2);
     } else {
-      temp_ang = b_ang * 1.15;
+      temp_ang = b_ang - (b_distance * 0.1);
       bno.SetTarget(-15);
     }
   }
 }
+
+//This function checks the line sensors and updates the robot's state accordingly. If a line is detected, it sets the appropriate flags and determines which side the line is on. It also handles the logic for exiting line avoidance mode after a certain amount of time has passed.  
 
 void checkLineSensors() {
   bool frontDetected = isLineDetectedDirect(FRONT_PINS, FRONT_COUNT, FRONT_THRESHOLD); // CHANGED: replaced photoMux call
@@ -132,6 +148,7 @@ void checkLineSensors() {
     }
   }
 }
+
 
 void setup() {
   Serial.begin(115200);
@@ -206,7 +223,7 @@ void loop() {
     }
 
   } else {
-    // ── Normal movement logic ─────────────────────────────────────────────
+
     motorss.SetAllSpeeds(Speed);
 
     if (isBallFront()) {
@@ -217,7 +234,7 @@ void loop() {
       Serial.println(temp_ang);
 
     } else {
-      // Ball NOT in front range — search / approach
+
 
       Serial.println(frontCam.ball_seen);
 
@@ -245,7 +262,7 @@ void loop() {
           motorss.MoveOmnidirectionalBase((int)m_ang, 90, speed_w);
           Serial.println("Moving left");
         } else {
-          Serial.println("Ball out of bounds");
+          Serial.println("Ball is behind");
           motorss.MoveOmnidirectionalBase(120, Speed, speed_w);
         }
 

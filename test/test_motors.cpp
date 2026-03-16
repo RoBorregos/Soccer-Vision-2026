@@ -42,7 +42,7 @@ void loop() {
   //motorss.MoveMotor4();
   //delay(1000);
   //motorss.StopMotors();
-  motorss.MoveForward();
+  //motorss.MoveForward();
   //delay(1000);
   //motorss.StopMotors();
   //motorss.MoveBackward();

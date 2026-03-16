@@ -52,6 +52,8 @@ void Motors::StopMotors()
     back_left.StopMotor();
 }
 
+//This functions are used just to debug in case of error or changes in connections, or electronics
+//THey will be deleted in the future, but for now they are useful to check if the motors are working and if the connections are correct
 void Motors::MoveForward()
 {
     front_left.MoveForward();
@@ -90,6 +92,8 @@ void Motors::MoveMotor3() { back_right.MoveForward(); }
 void Motors::MoveMotor4() { back_left.MoveForward(); }
 
 
+//This is the main function for moving the robot in any direction, it calculates the necesary speed and direction of each wheel and adds
+//the PID for the robot to move in the desired direction while looking at 0 degreees
 void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_output)
 {
     //degree = degree + 90; // Ajuste para que 0° sea hacia adelante
@@ -122,4 +126,3 @@ void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_ou
     (m3 >= 0) ? back_right.MoveForward() : back_right.MoveBackward();
     (m4 >= 0) ? back_left.MoveForward() : back_left.MoveBackward();
 }
-//Lanta 1 esta girando mal

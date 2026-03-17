@@ -10,9 +10,9 @@ extern float pid_max_output;
 
 const double DeadEnd = 2.0; // Deadband for yaw error
 const double I_DEADBAND = 1.5; // Degrees
-const int MOTOR3_IN1 = 33; //34
-const int MOTOR3_IN2 = 34; //33
-const int MOTOR3_PWM = 4;  //4
+const int MOTOR3_IN1 = 11; //34
+const int MOTOR3_IN2 = 10; //33
+const int MOTOR3_PWM = 12;  //4
 
 const int MOTOR2_IN1 = 30;  // 30  //Debería ser el 4
 const int MOTOR2_IN2 = 31;  // 31
@@ -29,8 +29,19 @@ const int MOTOR1_PWM = 2;  // 2
 const int KICKER_PIN =  32; //Ping del Kicker
 
 // PhotoMux pins
-const uint8_t selectPins[3] = {6, 7, 8}; // Mux select pins
-const uint8_t muxPins[4] = {14, 15, 16, 17}; // Analog pins (A0=14, A1=15, etc.)
+const uint8_t FRONT_PINS[] = {39, 40, 41, 20};
+const uint8_t LEFT_PINS[]  = {27, 26, 38};
+const uint8_t RIGHT_PINS[] = {22, 23, 17};
+
+const uint8_t FRONT_COUNT  = 4;
+const uint8_t LEFT_COUNT   = 3;
+const uint8_t RIGHT_COUNT  = 3;
+
+//Treshdolds for photos
+const int FRONT_THRESHOLD = 5000;
+const int LEFT_THRESHOLD  = 8000;
+const int RIGHT_THRESHOLD = 8000;
+
 
 //Constantes para velocidades del dribbler
 const int servo_min = 1000;

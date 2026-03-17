@@ -12,41 +12,78 @@ double last_speed_w = 0.0; //No use for now
 //variables for moving side to side when ball is not seen
 bool side = true; //true for right, false for left
 
-
 //Variables for Motor control
 const uint8_t Speed = 120; //Robot speedbase
 
-// ── Phototransistor pin definitions 
-const uint8_t FRONT_PINS[] = {39, 40, 41, 20};
-const uint8_t RIGHT_PINS[] = {22, 23, 17};
-const uint8_t FRONT_COUNT  = 4;
-const uint8_t LEFT_COUNT   = 3;
-const uint8_t RIGHT_COUNT  = 3;
-
 //Variables for avoiding the lines
-const int FRONT_THRESHOLD = 2900; 
-const int LEFT_THRESHOLD  = 2100;
-const int RIGHT_THRESHOLD = 6000;
-
 enum LineSide { LINE_NONE, LINE_FRONT, LINE_LEFT, LINE_RIGHT, LINE_BOTH_SIDES };
 
 unsigned long lineDetectedTime = 0;
+bool isAvoidingLine          = false;
+LineSide detectedLineSide    = LINE_NONE;
 
-bool isAvoidingLine = false;
-LineSide detectedLineSide = LINE_NONE;
-
-
-
-
-//Variable for angle control in different game situations 
+//Variable for angle control in different game situations
 float temp_ang = 0;
 
-// Camera boolean states
-bool front_ball_seen = false;
-bool front_goal_seen = false;
-bool mirror_ball_seen = false;
-bool mirror_goal_seen = false;
+// Camera boolean states (front)
+float f_ball_distance = 0, f_ball_angle = 0;
+float f_goal_distance = 0, f_goal_angle = 0;
+float f_own_distance  = 0, f_own_angle  = 0;
+bool  f_ball_seen = false, f_goal_seen = false, f_own_seen = false;
 
+// Camera boolean states (mirror)
+float m_ball_distance = 0, m_ball_angle = 0;
+float m_goal_distance = 0, m_goal_angle = 0;
+float m_own_distance  = 0, m_own_angle  = 0;
+bool  m_ball_seen = false, m_goal_seen = false, m_own_seen = false;
+
+String serial1_line;
+String serial2_line;
+
+// ── Serial parsing ─────────────────────────────────────────────────────────────
+void process_serialF(const String& line) {
+  float dist, ang, g_dist, g_ang, o_dist, o_ang;
+  int parsed = sscanf(line.c_str(), "%f %f %f %f %f %f",
+                      &dist, &ang, &g_dist, &g_ang, &o_dist, &o_ang);
+  if (parsed == 6) {
+    f_ball_distance = dist;   f_ball_angle = ang;
+    f_goal_distance = g_dist; f_goal_angle = g_ang;
+    f_own_distance  = o_dist; f_own_angle  = o_ang;
+    f_ball_seen = (fabsf(dist)   > 1e-3f);
+    f_goal_seen = (fabsf(g_dist) > 1e-3f);
+    f_own_seen  = (fabsf(o_dist) > 1e-3f);
+  }
+}
+
+void process_serialM(const String& line) {
+  float dist, ang, g_dist, g_ang, o_dist, o_ang;
+  int parsed = sscanf(line.c_str(), "%f %f %f %f %f %f",
+                      &dist, &ang, &g_dist, &g_ang, &o_dist, &o_ang);
+  if (parsed == 6) {
+    m_ball_distance = dist;   m_ball_angle = ang;
+    m_goal_distance = g_dist; m_goal_angle = g_ang;
+    m_own_distance  = o_dist; m_own_angle  = o_ang;
+    m_goal_angle += 25.0f;
+    m_ball_seen = (fabsf(ang)    > 1e-3f);
+    m_goal_seen = (fabsf(g_dist) > 1e-3f);
+    m_own_seen  = (fabsf(o_dist) > 1e-3f);
+  }
+}
+
+void readSerialLines() {
+  while (Serial1.available()) {
+    char c = (char)Serial1.read();
+    if (c == '\r') continue;
+    if (c == '\n') { process_serialF(serial1_line); serial1_line = ""; }
+    else { serial1_line += c; if (serial1_line.length() > 120) serial1_line = ""; }
+  }
+  while (Serial2.available()) {
+    char c = (char)Serial2.read();
+    if (c == '\r') continue;
+    if (c == '\n') { process_serialM(serial2_line); serial2_line = ""; }
+    else { serial2_line += c; if (serial2_line.length() > 80) serial2_line = ""; }
+  }
+}
 
 //This function reads the phototransistor values directly and determines if a line is detected based on the average of the squared readings compared to a threshold. This method is more efficient than using the PhotoMux class and provides a more direct way to check for line detection.
 bool isLineDetectedDirect(const uint8_t* pins, uint8_t count, int threshold) {
@@ -59,9 +96,70 @@ bool isLineDetectedDirect(const uint8_t* pins, uint8_t count, int threshold) {
   return avg > threshold;
 }
 
-//This function is DEADCODE (for now) 
+//This function checks the line sensors and updates the robot's state accordingly. If a line is detected, it sets the appropriate flags and determines which side the line is on. It also handles the logic for exiting line avoidance mode after a certain amount of time has passed.
+void checkLineSensors() {
+  bool frontDetected = isLineDetectedDirect(FRONT_PINS, FRONT_COUNT, FRONT_THRESHOLD);
+  bool leftDetected  = isLineDetectedDirect(LEFT_PINS,  LEFT_COUNT,  LEFT_THRESHOLD);
+  bool rightDetected = isLineDetectedDirect(RIGHT_PINS, RIGHT_COUNT, RIGHT_THRESHOLD);
+
+  if (frontDetected || leftDetected || rightDetected) {
+    lineDetectedTime = millis();
+    isAvoidingLine   = true;
+
+    if (leftDetected && rightDetected) {
+      detectedLineSide = LINE_BOTH_SIDES;
+      Serial.println("LINE DETECTED: BOTH SIDES -> Moving backward");
+    } else if (frontDetected) {
+      detectedLineSide = LINE_FRONT;
+      Serial.println("LINE DETECTED: FRONT -> Moving backward");
+    } else if (leftDetected) {
+      detectedLineSide = LINE_LEFT;
+      Serial.println("LINE DETECTED: LEFT -> Moving right");
+    } else if (rightDetected) {
+      detectedLineSide = LINE_RIGHT;
+      Serial.println("LINE DETECTED: RIGHT -> Moving left");
+    }
+  } else if (isAvoidingLine) {
+    if (millis() - lineDetectedTime >= correctionTime) {
+      isAvoidingLine   = false;
+      detectedLineSide = LINE_NONE;
+      Serial.println("LINE ESCAPE END");
+    }
+  }
+}
+
+//This function checks if the ball is close and infront of the robot, to start different strategies
+//It uses the aproximate distance and the angle to determine this
+bool isBallFront() {
+  return f_ball_seen && f_ball_distance < 42 && fabsf(f_ball_angle) < 35;
+}
+
+//This function is used, to check if the ball and the goal are aligned, if they are not it tries to align them
+//After the alignement, it uses temp_ang to move the robot towards the ball while multyplying to make a slight curve
+void desired_ang_goal(float g_ang, float b_ang) {
+  //If ang goal is positive (right)
+  if (g_ang > 0) {
+    if (b_ang < 0) { //Check if goal angle and ball angle are aligned
+      temp_ang = b_ang - (b_ang * 0.2); //If not, adjust temp_ang based on ball distance
+    } else {
+      temp_ang = b_ang + (b_ang * 0.1); //If aligned, adjust temp_ang based on ball distance
+      bno.SetTarget(0);
+    }
+  }
+  //If ang goal is negative (left)
+  if (g_ang < 0) {
+    if (b_ang > 0) {
+      temp_ang = b_ang + (b_ang * 0.2);
+    } else {
+      temp_ang = b_ang - (b_ang * 0.1);
+      bno.SetTarget(0);
+    }
+  }
+}
+
+//This function is DEADCODE (for now)
 //It was intended to move the robot using the mirror
-void mirror_angle_section(double ang, uint8_t speed, double speed_w) { //Deadcpe for now, but might be useful for future improvements
+void mirror_angle_section(double ang, uint8_t speed, double speed_w) { //Deadcode for now, but might be useful for future improvements
   if (abs(ang) > 145.0f) {
     if (ang > 0) {
       motorss.MoveOmnidirectionalBase(180, speed, speed_w);
@@ -77,109 +175,23 @@ void mirror_angle_section(double ang, uint8_t speed, double speed_w) { //Deadcpe
   }
 }
 
-//This function checks if the ball is close and infront of the robot, to start different strategies
-//It uses the aproximate distance and the angle to determine this
-bool isBallFront() {
-  if (front_ball_seen) {
-    if (frontCam.ball_distance < 42 && abs(frontCam.ball_angle) < 35) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
-}
-
-//This function is used, to check if the ball and the goal are aligned, if they are not it tries to align them
-//After the alignement, it uses temp_ang to move the robot towards the ball while multyplying to make a slight curve
-void desired_ang_goal(float g_ang, float b_ang, uint8_t speed, double speed_w, double b_distance) {
-  //If ang goal is positive (right)
-  if (g_ang > 0) {
-    if (b_ang < 0) { //Check if goal angle and ball angle are aligned
-      temp_ang = b_ang - (b_distance * 0.2); //If not, adjust temp_ang based on ball distance
-    } else {
-      temp_ang = b_ang +  (b_distance * 0.1); //If aligned, adjust temp_ang based on ball distance
-      bno.SetTarget(15);
-    }
-  }
-  //If ang goal is negative (left)
-  if (g_ang < 0) {
-    if (b_ang > 0) {
-      temp_ang = b_ang + (b_distance * 0.2);
-    } else {
-      temp_ang = b_ang - (b_distance * 0.1);
-      bno.SetTarget(-15);
-    }
-  }
-}
-
-//This function checks the line sensors and updates the robot's state accordingly. If a line is detected, it sets the appropriate flags and determines which side the line is on. It also handles the logic for exiting line avoidance mode after a certain amount of time has passed.  
-
-void checkLineSensors() {
-  bool frontDetected = isLineDetectedDirect(FRONT_PINS, FRONT_COUNT, FRONT_THRESHOLD); // CHANGED: replaced photoMux call
-  bool leftDetected  = isLineDetectedDirect(LEFT_PINS,  LEFT_COUNT,  LEFT_THRESHOLD);
-  bool rightDetected = isLineDetectedDirect(RIGHT_PINS, RIGHT_COUNT, RIGHT_THRESHOLD);
-
-  if (frontDetected || leftDetected || rightDetected) {
-    lineDetectedTime = millis();
-    isAvoidingLine   = true;
-
-    if (leftDetected && rightDetected) {
-      detectedLineSide = LINE_BOTH_SIDES;
-      Serial.println("LINE DETECTED: BOTH SIDES -> Moving backward");
-    } else if (frontDetected) {
-      detectedLineSide = LINE_FRONT;
-      Serial.println("LINE DETECTED: FRONT -> Moving backward");
-      Serial.println(photoMux.getAverage(FRONT));
-    } else if (leftDetected) {
-      detectedLineSide = LINE_LEFT;
-      Serial.println("LINE DETECTED: LEFT -> Moving right");
-    } else if (rightDetected) {
-      detectedLineSide = LINE_RIGHT;
-      Serial.println("LINE DETECTED: RIGHT -> Moving left");
-    }
-
-  } else if (isAvoidingLine) {
-    if (millis() - lineDetectedTime >= correctionTime) {
-      isAvoidingLine   = false;
-      detectedLineSide = LINE_NONE;
-      Serial.println("LINE ESCAPE END");
-    }
-  }
-}
-
-
 void setup() {
   Serial.begin(115200);
   Serial1.begin(115200);
   Serial2.begin(115200);
   bno.InitializeBNO();
   motorss.InitializeMotors();
-
   delay(300);
   bno.GetBNOData();
   setpoint = (float)bno.GetYaw();
   bno.SetTarget(setpoint);
   delay(300);
   analogReadResolution(12);
-
-  // Initialize PhotoMux
-  photoMux.begin();
-  photoMux.configureSide(FRONT, front, FRONT_COUNT);
-  photoMux.setThreshold(FRONT, FRONT_THRESHOLD);
 }
 
 void loop() {
   // Read serial lines from both cameras
-  frontCam.read();
-  mirrorCam.read();
-
-  // Update camera boolean states
-  front_ball_seen  = frontCam.ball_seen;
-  front_goal_seen  = frontCam.goal_seen;
-  mirror_ball_seen = mirrorCam.ball_seen;
-  mirror_goal_seen = mirrorCam.goal_seen;
+  readSerialLines();
 
   // Get current yaw from BNO
   bno.GetBNOData();
@@ -228,56 +240,49 @@ void loop() {
 
     if (isBallFront()) {
       // Ball is close and centered: aim toward goal
-      desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle, Speed, speed_w);
-      motorss.MoveOmnidirectionalBase(temp_ang, Speed, speed_w);
+      desired_ang_goal(f_goal_angle, f_ball_angle);
+      motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       Serial.print("Ball in front, moving with temp_ang: ");
       Serial.println(temp_ang);
 
-    } else {
+    } else if (f_ball_seen) {
+      // Ball visible from front camera
+      Serial.print("Ball seen front: ");
+      static float smooth_ang = 0.0f;
+      float raw_ang = -f_ball_angle;
+      smooth_ang = 0.6f * smooth_ang + 0.4f * raw_ang;
+      if (fabsf(smooth_ang) < 7.0f) smooth_ang = 0.0f;
+      smooth_ang = constrain(smooth_ang, -90.0f, 90.0f);
+      Serial.println(smooth_ang);
+      motorss.MoveOmnidirectionalBase((int)smooth_ang, Speed, speed_w);
 
+    } else if (m_ball_seen) {
+      // Ball visible from mirror camera
+      Serial.print("Ball seen in mirror: ");
+      Serial.println(m_ball_angle);
 
-      Serial.println(frontCam.ball_seen);
-
-      if (front_ball_seen) {
-        // Ball visible from front camera
-        Serial.print("Ball seen front: ");
-        float ang = -frontCam.ball_angle;
-        if (fabsf(ang) < 7.0f) ang = 0.0f;
-        ang = constrain(ang, -90.0f, 90.0f);
-        Serial.print(ang);
-        Serial.println(frontCam.ball_distance);
-        motorss.MoveOmnidirectionalBase((int)ang, Speed, speed_w);
-
-      } else if (mirror_ball_seen) {
-        // Ball visible from mirror camera
-        Serial.print("Ball seen in mirror: ");
-        Serial.println(mirrorCam.ball_angle);
-
-        if (mirrorCam.ball_angle > 45.0f) {
-          double m_ang = mirrorCam.ball_angle + 30.0;
-          motorss.MoveOmnidirectionalBase((int)m_ang, 90, speed_w);
-          Serial.println("Moving right");
-        } else if (mirrorCam.ball_angle < -40.0f) {
-          double m_ang = mirrorCam.ball_angle - 30.0;
-          motorss.MoveOmnidirectionalBase((int)m_ang, 90, speed_w);
-          Serial.println("Moving left");
-        } else {
-          Serial.println("Ball is behind");
-          motorss.MoveOmnidirectionalBase(120, Speed, speed_w);
-        }
-
+      if (m_ball_angle > 45.0f) {
+        motorss.MoveOmnidirectionalBase((int)(m_ball_angle + 30.0), 90, speed_w);
+        Serial.println("Moving right");
+      } else if (m_ball_angle < -40.0f) {
+        motorss.MoveOmnidirectionalBase((int)(m_ball_angle - 30.0), 90, speed_w);
+        Serial.println("Moving left");
       } else {
-        // Ball not seen anywhere sweep side to side
-        if (millis() - last_time >= 1000) {
-          last_time += 1000;
-          side = !side;
-        }
+        Serial.println("Ball is behind");
+        motorss.MoveOmnidirectionalBase(120, Speed, speed_w);
+      }
 
-        if (side) {
-          motorss.MoveOmnidirectionalBase(-90, Speed, speed_w);
-        } else {
-          motorss.MoveOmnidirectionalBase(90, Speed, speed_w);
-        }
+    } else {
+      // Ball not seen anywhere — sweep side to side
+      if (millis() - last_time >= 1000) {
+        last_time = millis();
+        side = !side;
+      }
+
+      if (side) {
+        motorss.MoveOmnidirectionalBase(-90, Speed, speed_w);
+      } else {
+        motorss.MoveOmnidirectionalBase(90, Speed, speed_w);
       }
     }
   }

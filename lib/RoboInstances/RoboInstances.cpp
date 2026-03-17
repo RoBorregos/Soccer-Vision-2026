@@ -16,14 +16,9 @@ Motors motorss(
   MOTOR4_PWM, MOTOR4_IN1, MOTOR4_IN2
 );
 
-PhotoMux photoMux(selectPins, muxPins);
+
 
 camera frontCam(Serial1);
 camera mirrorCam(Serial2, true);
 
-PhotoMux::Sensor front[] = {
-  {0, 39},
-  {0, 40},
-  {0, 41},
-  {0, 20}
-};
+

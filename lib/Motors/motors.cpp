@@ -1,4 +1,4 @@
-#include "motores.h"
+#include "motors.h"
 #include <Arduino.h>
 #include "constantes.h"
 #include <cmath>
@@ -84,10 +84,10 @@ void Motors::MoveBackward()
     back_left.MoveForward();
 }
 
-void Motors::MoveMotor1() { front_left.MoveForward(); }
-void Motors::MoveMotor2() { front_right.MoveForward(); }
-void Motors::MoveMotor3() { back_right.MoveForward(); }
-void Motors::MoveMotor4() { back_left.MoveForward(); }
+void Motors::Movefront_left() { front_left.MoveForward(); }
+void Motors::Movefront_right() { front_right.MoveForward(); }
+void Motors::Moveback_right() { back_right.MoveForward(); }
+void Motors::Moveback_left() { back_left.MoveForward(); }
 
 // This is the main function for moving the robot in any direction, it calculates the necessary speed and direction of each wheel and adds
 // the PID for the robot to move in the desired direction while looking at 0 degrees

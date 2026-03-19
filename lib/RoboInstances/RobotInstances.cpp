@@ -1,24 +1,22 @@
 #include "RobotInstances.h"
 
-//PID constants definitions
-float p = 1.6;
-float i = 0.015;
-float d = 0.15;
-float pid_max_output = 120.0;
-
 BNO055 bno;
 PID pid(p, i, d, pid_max_output);
 
 Motors motorss(
-  MOTOR1_PWM, MOTOR1_IN1, MOTOR1_IN2,
-  MOTOR2_PWM, MOTOR2_IN1, MOTOR2_IN2,
-  MOTOR3_PWM, MOTOR3_IN1, MOTOR3_IN2,
-  MOTOR4_PWM, MOTOR4_IN1, MOTOR4_IN2
+  FRONT_LEFT_PWM, FRONT_LEFT_IN1, FRONT_LEFT_IN2,
+  FRONT_RIGHT_PWM, FRONT_RIGHT_IN1, FRONT_RIGHT_IN2,
+  BACK_RIGHT_PWM, BACK_RIGHT_IN1, BACK_RIGHT_IN2,
+  BACK_LEFT_PWM, BACK_LEFT_IN1, BACK_LEFT_IN2
 );
-
-
 
 camera frontCam(Serial1);
 camera mirrorCam(Serial2, true);
 
-
+void initialize_robot() {
+  Serial1.begin(115200);
+  Serial2.begin(115200);
+  bno.InitializeBNO();
+  motorss.InitializeMotors();
+  analogReadResolution(12);
+  }

@@ -13,10 +13,10 @@ public:
     Motor back_right;
     Motor back_left;
 
-    Motors(uint8_t speed1, uint8_t in1_1, uint8_t in2_1,
-           uint8_t speed2, uint8_t in1_2, uint8_t in2_2,
-           uint8_t speed3, uint8_t in1_3, uint8_t in2_3,
-           uint8_t speed4, uint8_t in1_4, uint8_t in2_4);
+    Motors(uint8_t speed_front_left, uint8_t in1_front_left, uint8_t in2_front_left,
+           uint8_t speed_front_right, uint8_t in1_front_right, uint8_t in2_front_right,
+           uint8_t speed_back_right, uint8_t in1_back_right, uint8_t in2_back_right,
+           uint8_t speed_back_left, uint8_t in1_back_left, uint8_t in2_back_left);
 
     void InitializeMotors();
     void SetSpeed(uint8_t pwm, uint8_t speed);
@@ -26,10 +26,10 @@ public:
     void MoveBackward();
     void MoveRight();
     void MoveLeft();
-    void MoveMotor1();
-    void MoveMotor2();
-    void MoveMotor3();
-    void MoveMotor4();
+    void Movefront_left();
+    void Movefront_right();
+    void Moveback_right();
+    void Moveback_left();
     void MoveMotors(int degree, uint8_t speed);
     void GetAllSpeeds();
     void MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_output);

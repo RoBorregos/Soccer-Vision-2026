@@ -38,7 +38,7 @@ const uint8_t LEFT_COUNT   = 3;
 const uint8_t RIGHT_COUNT  = 3;
 
 //Treshdolds for photos
-const int FRONT_THRESHOLD = 5000;
+const int FRONT_THRESHOLD = 8500;
 const int LEFT_THRESHOLD  = 6000;
 const int RIGHT_THRESHOLD = 6000;
 

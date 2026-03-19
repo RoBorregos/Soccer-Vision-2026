@@ -10,7 +10,7 @@ double current_yaw = 0.0; //Current angle
 double last_speed_w = 0.0; //No use for now
 
 //variables for moving side to side when ball is not seen
-bool side = true; //true for right, false for left
+bool right = true; //true for right, false for left
 
 //Variables for Motor control
 const uint8_t Speed = 120; //Robot speedbase
@@ -79,7 +79,7 @@ void checkLineSensors() {
 }
 
 bool isBallFront() {
-  return frontCam.ball_seen && frontCam.ball_distance < 125 && fabsf(frontCam.ball_angle) < 30;
+  return frontCam.ball_seen && frontCam.ball_distance < 125 && fabsf(frontCam.ball_angle) < 25;
 }
 
 void desired_ang_goal(float goal_ang, float ball_ang) {
@@ -147,16 +147,20 @@ void loop() {
         motorss.MoveBackward();
         break;
       case LINE_FRONT_LEFT:
-        motorss.MoveOmnidirectionalBase(45, 120, speed_w);
+      temp_ang = 45.0f;
+        motorss.MoveOmnidirectionalBase((int)temp_ang, 120, speed_w);
         break;
       case LINE_FRONT_RIGHT:
-        motorss.MoveOmnidirectionalBase(-45, 120, speed_w);
+      temp_ang = -45.0f;
+        motorss.MoveOmnidirectionalBase((int)temp_ang, 120, speed_w);
         break;
       case LINE_LEFT:
-        motorss.MoveOmnidirectionalBase(90, 120, speed_w);
+          temp_ang = 90.0f;
+        motorss.MoveOmnidirectionalBase((int)temp_ang, 120, speed_w);
         break;
       case LINE_RIGHT:
-        motorss.MoveOmnidirectionalBase(-90, 120, speed_w);
+          temp_ang = -90.0f;
+        motorss.MoveOmnidirectionalBase((int)temp_ang, 120, speed_w);
         break;
       default:
         motorss.MoveBackward();
@@ -167,7 +171,7 @@ void loop() {
 
     motorss.SetAllSpeeds(Speed);
 
-    if (false) {
+    if (isBallFront()) {
       desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
       motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       Serial.print("Ball in front, moving with temp_ang: ");
@@ -208,13 +212,15 @@ void loop() {
     } else {
       if (millis() - last_time >= 1000) {
         last_time = millis();
-        side = !side;
+        right = !right;
       }
 
-      if (side) {
-        motorss.MoveOmnidirectionalBase(-90, Speed, speed_w);
+      if (right) {
+        temp_ang = -90.0f;
+        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       } else {
-        motorss.MoveOmnidirectionalBase(90, Speed, speed_w);
+        temp_ang = 90.0f;
+        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       }
     }
   }

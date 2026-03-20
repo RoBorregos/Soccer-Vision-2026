@@ -84,16 +84,18 @@ bool isBallFront() {
 
 void desired_ang_goal(float goal_ang, float ball_ang) {
   if (goal_ang > 0) {
-    if (ball_ang < 10) {
+    if (ball_ang < 15) {
       temp_ang = ball_ang - 30;
     } else {
+      bno.SetTarget(goal_ang);
       temp_ang = ball_ang;
     }
   }
   if (goal_ang < 0) {
-    if (ball_ang > 10) {
+    if (ball_ang > 15) {
       temp_ang = ball_ang + 80;
     } else {
+      bno.SetTarget(goal_ang);
       temp_ang = ball_ang;
     }
   }

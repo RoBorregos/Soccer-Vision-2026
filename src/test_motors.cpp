@@ -1,20 +1,20 @@
 #include <Arduino.h>
 #include <cmath>
-#include "motores.h"
+#include "motors.h"
 #include "BNO.h"
 #include "PID.h"
 #include "constantes.h"
 
-  Motors motorss(
-  MOTOR1_PWM, MOTOR1_IN1, MOTOR1_IN2,
-  MOTOR2_PWM, MOTOR2_IN1, MOTOR2_IN2,
-  MOTOR3_PWM, MOTOR3_IN1, MOTOR3_IN2,
-  MOTOR4_PWM, MOTOR4_IN1, MOTOR4_IN2);
+Motors motorss(
+  FRONT_LEFT_PWM, FRONT_LEFT_IN1, FRONT_LEFT_IN2,
+  FRONT_RIGHT_PWM, FRONT_RIGHT_IN1, FRONT_RIGHT_IN2,
+  BACK_RIGHT_PWM, BACK_RIGHT_IN1, BACK_RIGHT_IN2,
+  BACK_LEFT_PWM, BACK_LEFT_IN1, BACK_LEFT_IN2
+);
 
 
 
-
-const uint8_t Speed = 80 ; //Robot speedbase - reduced for testing
+const uint8_t Speed = 100 ; //Robot speedbase - reduced for testing
 
 void setup() {
   
@@ -42,7 +42,7 @@ void loop() {
   //motorss.MoveMotor4();
   //delay(1000);
   //motorss.StopMotors();
-  //motorss.MoveForward();
+  motorss.MoveForward();
   //delay(1000);
   //motorss.StopMotors();
   //motorss.MoveBackward();
@@ -51,7 +51,7 @@ void loop() {
   //motorss.MoveRight();
   //delay(1000);
   //motorss.StopMotors();
-  motorss.MoveLeft();
+  //motorss.MoveLeft();
   //motorss.MoveMotors(0, Speed);
   //motorss.MoveMotorsImu(-90, Speed, 0);
 

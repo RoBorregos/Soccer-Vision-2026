@@ -40,9 +40,9 @@ const uint8_t LEFT_COUNT   = 3;
 const uint8_t RIGHT_COUNT  = 3;
 
 //Treshdolds for photos
-const int FRONT_THRESHOLD = 7000;
-const int LEFT_THRESHOLD  = 60000;
-const int RIGHT_THRESHOLD = 600000;
+const int FRONT_THRESHOLD = 6600;
+const int LEFT_THRESHOLD  = 6000;
+const int RIGHT_THRESHOLD = 8000;
 
 
 //Constantes para velocidades del dribbler

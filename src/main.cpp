@@ -13,7 +13,7 @@ double last_speed_w = 0.0; //No use for now
 bool right = true; //true for right, false for left
 
 //Variables for Motor control
-const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed = 115; //Robot speedbase
 
 //Variables for avoiding the lines
 enum LineSide { LINE_NONE, LINE_FRONT, LINE_LEFT, LINE_RIGHT, LINE_BOTH_SIDES, LINE_FRONT_LEFT, LINE_FRONT_RIGHT, LINE_ALL_SIDES };
@@ -84,23 +84,33 @@ bool isBallFront() {
 
 void desired_ang_goal(float goal_ang, float ball_ang) {
   if (goal_ang > 0) {
-    if (ball_ang < 15) {
-      temp_ang = ball_ang - 30;
+    if (ball_ang < -8.0) {
+      if (fabsf(goal_ang - ball_ang) > 20) {
+        temp_ang = ball_ang - 80;
+      }
+      else {
+        bno.SetTarget(goal_ang);
+        temp_ang = goal_ang;
+      }
     } else {
       bno.SetTarget(goal_ang);
-      temp_ang = ball_ang;
+      temp_ang = goal_ang;
     }
   }
   if (goal_ang < 0) {
-    if (ball_ang > 15) {
-      temp_ang = ball_ang + 80;
+    if (ball_ang > 8.0f) {
+      if (fabsf(goal_ang - ball_ang) > 20) {
+        temp_ang = ball_ang + 80;
+      }
     } else {
       bno.SetTarget(goal_ang);
-      temp_ang = ball_ang;
+      temp_ang = goal_ang;
     }
   }
   Serial.print("Temp ang is: ");
   Serial.println(temp_ang);
+  Serial.print("Ball angle is: ");
+  Serial.println(ball_ang);
 }
 
 void setup() {
@@ -144,7 +154,12 @@ void loop() {
 
     switch (detectedLineSide) {
       case LINE_FRONT:
+      temp_ang = 180;
+      motorss.MoveOmnidirectionalBase((int)temp_ang, 120, speed_w);
+      break;
+
       case LINE_ALL_SIDES:
+
       case LINE_BOTH_SIDES:
         motorss.MoveBackward();
         break;
@@ -182,6 +197,7 @@ void loop() {
       Serial.println(frontCam.goal_angle);
 
     } else if (frontCam.ball_seen) {
+      bno.SetTarget(0.0f);
       Serial.print("Ball seen front: ");
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < 6.0f) ang = 0.0f;

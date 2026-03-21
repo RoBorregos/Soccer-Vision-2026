@@ -13,7 +13,7 @@ double last_speed_w = 0.0; //No use for now
 bool right = true; //true for right, false for left
 
 //Variables for Motor control
-const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed = 115; //Robot speedbase
 
 //Variables for avoiding the lines
 enum LineSide { LINE_NONE, LINE_FRONT, LINE_LEFT, LINE_RIGHT, LINE_BOTH_SIDES, LINE_FRONT_LEFT, LINE_FRONT_RIGHT, LINE_ALL_SIDES };
@@ -28,6 +28,10 @@ float temp_ang = 0;
 String serial1_line;
 String serial2_line;
 
+//New Variables
+float Ball_distance_threshold = 125.0f; // Distance threshold to consider the ball is in front of the robot
+float Ball_infront_ang_threshold = 25.0f; // Angle threshold to consider the ball is in front of the robot
+float Deadband_4_ballgoalangle = 20.0f; // Deadband for ball-goal angle when the ball is in front
 bool isLineDetectedDirect(const uint8_t* pins, uint8_t count, int threshold) {
   long sum = 0;
   for (uint8_t i = 0; i < count; i++) {
@@ -79,26 +83,38 @@ void checkLineSensors() {
 }
 
 bool isBallFront() {
-  return frontCam.ball_seen && frontCam.ball_distance < 125 && fabsf(frontCam.ball_angle) < 25;
+  return frontCam.ball_seen && frontCam.ball_distance < Ball_distance_threshold && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold;
 }
 
 void desired_ang_goal(float goal_ang, float ball_ang) {
-  if (goal_ang > 0) {
-    if (ball_ang < 10) {
-      temp_ang = ball_ang - 30;
+  if (goal_ang > 0) {// Goal is on the right
+    if (ball_ang < -10.0f) {
+      if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
+        temp_ang = ball_ang - 80; //This makes the robot move to the left to align the ball
+      }
+      else {
+        bno.SetTarget(goal_ang + 10.0f);
+        temp_ang = goal_ang;
+      }
     } else {
-      temp_ang = ball_ang;
+      bno.SetTarget(goal_ang);
+      temp_ang = goal_ang;
     }
   }
-  if (goal_ang < 0) {
-    if (ball_ang > 10) {
-      temp_ang = ball_ang + 80;
+  if (goal_ang < 0) { // Goal is on the left
+    if (ball_ang > 10.0f) {
+      if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
+        temp_ang = ball_ang + 80; //This makes the robot move to the right to align the ball
+      }
     } else {
-      temp_ang = ball_ang;
+      bno.SetTarget(goal_ang - 10.0f);
+      temp_ang = goal_ang;
     }
   }
   Serial.print("Temp ang is: ");
   Serial.println(temp_ang);
+  Serial.print("Ball angle is: ");
+  Serial.println(ball_ang);
 }
 
 void setup() {
@@ -137,12 +153,17 @@ void loop() {
   // Check line sensors — maximum priority
   checkLineSensors();
 
-  if (isAvoidingLine) {
+  if (false) {
     motorss.SetAllSpeeds(120);
 
     switch (detectedLineSide) {
       case LINE_FRONT:
+      temp_ang = 180;
+      motorss.MoveOmnidirectionalBase((int)temp_ang, 120, speed_w);
+      break;
+
       case LINE_ALL_SIDES:
+
       case LINE_BOTH_SIDES:
         motorss.MoveBackward();
         break;
@@ -171,7 +192,7 @@ void loop() {
 
     motorss.SetAllSpeeds(Speed);
 
-    if (false) {
+    if (isBallFront()) {
       desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
       motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       Serial.print("Ball in front, moving with temp_ang: ");
@@ -180,6 +201,7 @@ void loop() {
       Serial.println(frontCam.goal_angle);
 
     } else if (frontCam.ball_seen) {
+      bno.SetTarget(0.0f);
       Serial.print("Ball seen front: ");
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < 6.0f) ang = 0.0f;
@@ -206,7 +228,7 @@ void loop() {
         Serial.println("Moving left");
       } else {
         Serial.println("Ball is behind");
-        motorss.MoveOmnidirectionalBase(145, Speed, speed_w);
+        motorss.MoveOmnidirectionalBase(125, Speed, speed_w);
       }
 
     } else {

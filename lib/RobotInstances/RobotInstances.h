@@ -4,13 +4,14 @@
 #include "PhotoMux.h"
 #include "camera.h"
 #include "motors.h"
+#include "constantes.h"
 
 #include "constantes.h"
 
 extern BNO055 bno;
 extern PID pid;
 extern Motors motorss;
-extern PhotoMux photoMux;
+extern PhotoMux sensors;
 
 extern PhotoMux::Sensor front[];
 extern const uint8_t FRONT_COUNT;

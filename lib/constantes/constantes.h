@@ -12,21 +12,24 @@ const float pid_max_output = 120.0;
 
 const double DeadEnd = 2.0; // Deadband for yaw error
 const double I_DEADBAND = 1.5; // Degrees
-const int BACK_RIGHT_IN1 = 11; //34
-const int BACK_RIGHT_IN2 = 10; //33
+
+const int BACK_RIGHT_IN1 = 10; //34
+const int BACK_RIGHT_IN2 = 11; //33
 const int BACK_RIGHT_PWM = 12;  //4
 
-const int FRONT_RIGHT_IN1 = 30;  // 30  //Debería ser el 4
-const int FRONT_RIGHT_IN2 = 31;  // 31
-const int FRONT_RIGHT_PWM = 3;  // 3
+const int BACK_LEFT_IN1 = 31;  // 30  //Debería ser el 4
+const int BACK_LEFT_IN2 = 30;  // 31
+const int BACK_LEFT_PWM = 3;  // 3
 
-const int BACK_LEFT_IN1 = 35;  // 36   //Deberia ser el 2 //Motor 4 para electronica
-const int BACK_LEFT_IN2 = 36;  // 35
-const int BACK_LEFT_PWM = 5;  // 5
+const int FRONT_RIGHT_IN1 = 35;  // 36   //Deberia ser el 2 //Motor 4 para electronica
+const int FRONT_RIGHT_IN2 = 36;  // 35
+const int FRONT_RIGHT_PWM = 5;  // 5
 
-const int FRONT_LEFT_IN1 = 29;  // 29   //Esta Bien
-const int FRONT_LEFT_IN2 = 28;  // 28
-const int FRONT_LEFT_PWM = 2;  // 2
+const int FRONT_LEFT_IN1 = 28;  // 29   //Esta Bien
+const int FRONT_LEFT_IN2 = 29;  // 28
+const int FRONT_LEFT_PWM = 2;  // 24
+
+
 
 const int KICKER_PIN =  32; //Ping del Kicker
 

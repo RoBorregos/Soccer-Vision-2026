@@ -127,9 +127,9 @@ unsigned long kicker_pulse_start = 0;
 unsigned long last_kick_time = 0;
 
 void checkLineSensors() {
-  bool frontDetected = sensors.isLineDetected(FRONT);
-  bool leftDetected  = sensors.isLineDetected(LEFT);
-  bool rightDetected = sensors.isLineDetected(RIGHT);
+  bool frontDetected = false; //sensors.isLineDetected(FRONT);
+  bool leftDetected  = false; //sensors.isLineDetected(LEFT);
+  bool rightDetected = false; //sensors.isLineDetected(RIGHT);
   bool backDetected  = sensors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
@@ -259,8 +259,8 @@ void loop() {
   current_yaw = bno.GetYaw();
   Serial.print("Yaw: ");
   Serial.print(current_yaw);
-  Serial.print(" | Back avg: ");
-  Serial.println(sensors.getAverage(BACK));
+  //Serial.print(" | Back avg: ");
+  //Serial.println(sensors.getAverage(BACK));
 
   if (fabs(current_yaw) < Yaw_zero_glitch_threshold && fabs(last_valid_yaw) > Yaw_last_valid_min_change) {
     current_yaw = last_valid_yaw;

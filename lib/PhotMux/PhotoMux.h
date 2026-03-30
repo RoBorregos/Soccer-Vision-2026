@@ -12,8 +12,8 @@ public:
 
     // - Sensor: mux index + analog channel
     struct Sensor {
-        uint8_t muxIndex;   // - mux number
-        uint8_t channel;    // - analog pin (A0..)
+        uint8_t muxIndex;   // - Which mux to read
+        uint8_t channel;    // - Mux channel (0-7)
     };
 
     // - Constructor: store pin mappings

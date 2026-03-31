@@ -128,30 +128,39 @@ unsigned long last_kick_time = 0;
 
 void checkLineSensors() {
   bool frontDetected = sensors.isLineDetected(FRONT);
-  bool leftDetected  = false;
-  bool rightDetected = sensors.isLineDetected(RIGHT);
+  bool leftDetected  = sensors.isLineDetected(LEFT);
+  bool rightDetected = false;
   bool backDetected  = sensors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
+    
     lineDetectedTime = millis();
     isAvoidingLine   = true;
 
     if (frontDetected && leftDetected && rightDetected) {
       detectedLineSide = LINE_ALL_SIDES;
+      Serial.println("All Lines Detected");
     } else if (leftDetected && rightDetected) {
       detectedLineSide = LINE_BOTH_SIDES;
+      Serial.println("Left and Right Lines Detected");
     } else if (frontDetected && leftDetected) {
       detectedLineSide = LINE_FRONT_LEFT;
+      Serial.println("Front and Left Lines Detected");
     } else if (frontDetected && rightDetected) {
       detectedLineSide = LINE_FRONT_RIGHT;
+      Serial.println("Front and Right Lines Detected");
     } else if (frontDetected) {
       detectedLineSide = LINE_FRONT;
+      Serial.println("Front Line Detected");
     } else if (leftDetected) {
       detectedLineSide = LINE_LEFT;
+      Serial.println("Left Line Detected");
     } else if (rightDetected) {
       detectedLineSide = LINE_RIGHT;
+      Serial.println("Right Line Detected");
     } else if (backDetected) {
       detectedLineSide = LINE_BACK;
+      Serial.println("Back Line Detected");
     }
   } else if (isAvoidingLine) {
     if (millis() - lineDetectedTime >= correctionTime) {
@@ -258,7 +267,7 @@ void loop() {
   bno.GetBNOData();
   current_yaw = bno.GetYaw();
   Serial.print("Yaw: ");
-  Serial.print(current_yaw);
+  Serial.println(current_yaw);
   //Serial.print(" | Back avg: ");
   //Serial.println(sensors.getAverage(BACK));
 

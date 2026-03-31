@@ -2,14 +2,14 @@
 #include "RobotInstances.h"
 
 PhotoMux::Sensor front[8] = {
-  {0, 0}, 
-  {0, 1}, 
-  {0, 2}, 
-  {0, 3}, 
-  {0, 4}, 
-  {0, 5}, 
-  {0, 6},
-  {0, 7}
+  {3, 0}, 
+  {3, 1}, 
+  {3, 2}, 
+  {3, 3}, 
+  {3, 4}, 
+  {3, 5}, 
+  {3, 6},
+  {3, 7}
 };
 
 PhotoMux::Sensor left[8] = {
@@ -24,14 +24,14 @@ PhotoMux::Sensor left[8] = {
 };
 
 PhotoMux::Sensor right[8] = {
-  {3, 0}, 
-  {3, 1}, 
-  {3, 2}, 
-  {3, 3}, 
-  {3, 4}, 
-  {3, 5}, 
-  {3, 6},
-  {3, 7}
+  {0, 0}, 
+  {0, 1}, 
+  {0, 2}, 
+  {0, 3}, 
+  {0, 4}, 
+  {0, 5}, 
+  {0, 6},
+  {0, 7}
 };
 
 PhotoMux::Sensor back[8] = {
@@ -127,9 +127,9 @@ unsigned long kicker_pulse_start = 0;
 unsigned long last_kick_time = 0;
 
 void checkLineSensors() {
-  bool frontDetected = false; //sensors.isLineDetected(FRONT);
-  bool leftDetected  = false; //sensors.isLineDetected(LEFT);
-  bool rightDetected = false; //sensors.isLineDetected(RIGHT);
+  bool frontDetected = sensors.isLineDetected(FRONT);
+  bool leftDetected  = false;
+  bool rightDetected = sensors.isLineDetected(RIGHT);
   bool backDetected  = sensors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {

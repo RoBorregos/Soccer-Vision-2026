@@ -1,51 +1,6 @@
 #include <Arduino.h>
 #include "RobotInstances.h"
 
-PhotoMux::Sensor front[8] = {
-  {3, 0}, 
-  {3, 1}, 
-  {3, 2}, 
-  {3, 3}, 
-  {3, 4}, 
-  {3, 5}, 
-  {3, 6},
-  {3, 7}
-};
-
-PhotoMux::Sensor left[8] = {
-  {1, 0}, 
-  {1, 1}, 
-  {1, 2}, 
-  {1, 3}, 
-  {1, 4}, 
-  {1, 5}, 
-  {1, 6},
-  {1, 7}
-};
-
-PhotoMux::Sensor right[8] = {
-  {0, 0}, 
-  {0, 1}, 
-  {0, 2}, 
-  {0, 3}, 
-  {0, 4}, 
-  {0, 5}, 
-  {0, 6},
-  {0, 7}
-};
-
-PhotoMux::Sensor back[8] = {
-  {2, 0}, 
-  {2, 1}, 
-  {2, 2}, 
-  {2, 3}, 
-  {2, 4}, 
-  {2, 5}, 
-  {2, 6},
-  {2, 7}
-};
-
-
 //Variables for time management and PID
 unsigned long current_time;
 unsigned long last_time = 0;
@@ -60,12 +15,12 @@ bool sweepRight = true; //true for right, false for left
 //Variables for Motor control
 const uint8_t Speed = 115; //Robot speedbase
 
-//Variables for avoiding the lines
+//Possible Line cases
 enum LineSide { LINE_NONE, LINE_FRONT, LINE_LEFT, LINE_RIGHT, LINE_BACK, LINE_BOTH_SIDES, LINE_FRONT_LEFT, LINE_FRONT_RIGHT, LINE_ALL_SIDES };
 
-unsigned long lineDetectedTime = 0;
-bool isAvoidingLine          = false;
-LineSide detectedLineSide    = LINE_NONE;
+unsigned long lineDetectedTime = 0; //ms that line is detected
+bool isAvoidingLine          = false; //Boolean value for detecting line
+LineSide detectedLineSide    = LINE_NONE; //???
 
 //Variable for angle control in different game situations
 float temp_ang = 0;
@@ -78,54 +33,13 @@ float Ball_distance_threshold   = 125.0f; // Distance threshold to consider the 
 float Ball_infront_ang_threshold = 25.0f; // Angle threshold to consider the ball is in front of the robot
 float Deadband_4_ballgoalangle  = 20.0f;  // Deadband for ball-goal angle when the ball is in front
 
-// PID and yaw
-const float PID_output_max = 180.0f;
-const float PID_output_min = -180.0f;
-const float Yaw_zero_glitch_threshold  = 0.001; // Minimum yaw magnitude to consider a real reading
-const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude that triggers glitch detection
-//Variables for front
-const float Ball_front_angle_deadband = 6.0f;
-const float Ball_front_angle_clamp = 90.0f;
-const float Kick_ball_distance_very_close = 55.0f;
-const unsigned long Kicker_pulse_ms = 70;
-const unsigned long Kicker_cooldown_ms = 1300;
-const float Goal_heading_offset_right =  10.0f; // Added when goal is on the right
-const float Goal_heading_offset_left  = -10.0f; // Added when goal is on the left
-const float Ball_orbit_offset = 80.0f;
-const float Ball_front_min_lateral_angle = 10.0f;
 
-// Mirror camera — angular window where the ball is considered to be on the right or left flank
-const float Mirror_ball_right_ang_min =  45.0f;
-const float Mirror_ball_right_ang_max = 135.0f;
-const float Mirror_ball_left_ang_min  = -45.0f;
-const float Mirror_ball_left_ang_max  = -135.0f;
+//Kicker variables
+bool kicker_active = false; //Boolean value to activate the kicker
+unsigned long kicker_pulse_start = 0; //ms that the kicker was activated
+unsigned long last_kick_time = 0; //ms that the last kick was performed, used for cooldown management
 
-const float Mirror_ball_flank_offset = 30.0f;
-const float Mirror_ball_behind_ang = 125.0f;
-const unsigned long Search_sweep_interval_ms = 1000;
-
-// Line avoidance movement angles
-const float Line_avoid_ang_front      = 180.0f;  // Ball is behind robot, push backward
-const float Line_avoid_ang_front_left =  45.0f;  // Diagonal right-backward
-const float Line_avoid_ang_front_right = -45.0f; // Diagonal left-backward
-const float Line_avoid_ang_left       =  90.0f;  // Strafe right
-const float Line_avoid_ang_right      = -90.0f;  // Strafe left
-const float Line_avoid_ang_back       =   0.0f;  // Move forward to escape rear line
-
-// Line avoidance speed override
-const uint8_t Line_avoid_speed = 120;
-
-// Search sweep lateral angles
-const float Search_sweep_ang_right = -90.0f;
-const float Search_sweep_ang_left  =  90.0f;
-
-// BNO setup delay (ms)
-const uint16_t BNO_setup_delay_ms = 300;
-
-bool kicker_active = false;
-unsigned long kicker_pulse_start = 0;
-unsigned long last_kick_time = 0;
-
+//Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
   bool frontDetected = sensors.isLineDetected(FRONT);
   bool leftDetected  = sensors.isLineDetected(LEFT);
@@ -170,17 +84,21 @@ void checkLineSensors() {
   }
 }
 
+//Function that checks if the ball is infront of the robot using the front camera, distance and angle.
 bool isBallFront() {
   return frontCam.ball_seen
       && frontCam.ball_distance < Ball_distance_threshold
       && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold;
 }
 
+//What is the difference between this and is ballfront???
 bool canKickNow() {
   return frontCam.ball_seen
   && frontCam.ball_distance < Kick_ball_distance_very_close;
 }
 
+
+//What is this function for??
 void updateKicker() {
   unsigned long now = millis();
 
@@ -202,6 +120,7 @@ void updateKicker() {
   }
 }
 
+//Function to determine the desired angle based on the goal angle and ball angle, with different logic depending on whether the goal is on the right or left. It also includes an orbiting behavior around the ball when it's in front of the robot but not aligned with the goal.
 void desired_ang_goal(float goal_ang, float ball_ang) {
   if (goal_ang > 0) { // Goal is on the right
     if (ball_ang < -Ball_front_min_lateral_angle) {
@@ -241,19 +160,6 @@ void setup() {
   bno.SetTarget(setpoint);
   delay(BNO_setup_delay_ms);
 
-  //Photosensors
-  sensors.begin(); 
-  analogReadResolution(12);
-  sensors.configureSide(FRONT, front, 8);
-  sensors.configureSide(BACK, back, 8);
-  sensors.configureSide(LEFT, left, 8);
-  sensors.configureSide(RIGHT, right, 8);
-
-  sensors.setThreshold(FRONT, FRONT_THRESHOLD);
-  sensors.setThreshold(LEFT,  LEFT_THRESHOLD);
-  sensors.setThreshold(RIGHT, RIGHT_THRESHOLD);
-  sensors.setThreshold(BACK,  BACK_THRESHOLD);
-  
 }
 
 void loop() {
@@ -389,7 +295,7 @@ void loop() {
       }
     }
   }
-
+  
   delay(20);
   
 }

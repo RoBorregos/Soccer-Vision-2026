@@ -7,37 +7,21 @@ unsigned long last_time = 0;
 float setpoint = 0.0f; //Target angle for PID
 double last_valid_yaw = 0.0;
 double current_yaw = 0.0; //Current angle
-double last_speed_w = 0.0; //No use for now
 
-//variables for moving side to side when ball is not seen
+//Movement Variables
 bool sweepRight = true; //true for right, false for left
 
-//Variables for Motor control
-const uint8_t Speed = 115; //Robot speedbase
-
-//Possible Line cases
-enum LineSide { LINE_NONE, LINE_FRONT, LINE_LEFT, LINE_RIGHT, LINE_BACK, LINE_BOTH_SIDES, LINE_FRONT_LEFT, LINE_FRONT_RIGHT, LINE_ALL_SIDES };
-
+//PhotoMux Variables
 unsigned long lineDetectedTime = 0; //ms that line is detected
 bool isAvoidingLine          = false; //Boolean value for detecting line
-LineSide detectedLineSide    = LINE_NONE; //???
+LineSide detectedLineSide    = LINE_NONE; //Variable to store which line is detected, possible values defined in constantes.h
 
 //Variable for angle control in different game situations
 float temp_ang = 0;
 
+//Variables for communication with cameras
 String serial1_line;
 String serial2_line;
-
-//New Variables
-float Ball_distance_threshold   = 125.0f; // Distance threshold to consider the ball is in front of the robot
-float Ball_infront_ang_threshold = 25.0f; // Angle threshold to consider the ball is in front of the robot
-float Deadband_4_ballgoalangle  = 20.0f;  // Deadband for ball-goal angle when the ball is in front
-
-
-//Kicker variables
-bool kicker_active = false; //Boolean value to activate the kicker
-unsigned long kicker_pulse_start = 0; //ms that the kicker was activated
-unsigned long last_kick_time = 0; //ms that the last kick was performed, used for cooldown management
 
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
@@ -47,7 +31,7 @@ void checkLineSensors() {
   bool backDetected  = sensors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
-    
+
     lineDetectedTime = millis();
     isAvoidingLine   = true;
 
@@ -84,41 +68,13 @@ void checkLineSensors() {
   }
 }
 
-//Function that checks if the ball is infront of the robot using the front camera, distance and angle.
+//Function that checks if the ball is in front of the robot using the front camera, distance and angle.
 bool isBallFront() {
   return frontCam.ball_seen
       && frontCam.ball_distance < Ball_distance_threshold
       && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold;
 }
 
-//What is the difference between this and is ballfront???
-bool canKickNow() {
-  return frontCam.ball_seen
-  && frontCam.ball_distance < Kick_ball_distance_very_close;
-}
-
-
-//What is this function for??
-void updateKicker() {
-  unsigned long now = millis();
-
-  if (kicker_active) {
-    if (now - kicker_pulse_start >= Kicker_pulse_ms) {
-      digitalWrite(KICKER_PIN, LOW);
-      kicker_active = false;
-      last_kick_time = now;
-      Serial.println("Kicker OFF");
-    }
-    return;
-  }
-
-  if (canKickNow() && (now - last_kick_time >= Kicker_cooldown_ms)) {
-    digitalWrite(KICKER_PIN, HIGH);
-    kicker_active = true;
-    kicker_pulse_start = now;
-    Serial.println("Kicker ON");
-  }
-}
 
 //Function to determine the desired angle based on the goal angle and ball angle, with different logic depending on whether the goal is on the right or left. It also includes an orbiting behavior around the ball when it's in front of the robot but not aligned with the goal.
 void desired_ang_goal(float goal_ang, float ball_ang) {
@@ -159,23 +115,20 @@ void setup() {
   setpoint = (float)bno.GetYaw();
   bno.SetTarget(setpoint);
   delay(BNO_setup_delay_ms);
-
 }
 
 void loop() {
-  
+
   // Read serial lines from both cameras
   frontCam.read();
   mirrorCam.read();
-  updateKicker();
+  kicker.update(frontCam.ball_seen, frontCam.ball_distance);
 
   // Get current yaw from BNO
   bno.GetBNOData();
   current_yaw = bno.GetYaw();
   Serial.print("Yaw: ");
   Serial.println(current_yaw);
-  //Serial.print(" | Back avg: ");
-  //Serial.println(sensors.getAverage(BACK));
 
   if (fabs(current_yaw) < Yaw_zero_glitch_threshold && fabs(last_valid_yaw) > Yaw_last_valid_min_change) {
     current_yaw = last_valid_yaw;
@@ -193,7 +146,6 @@ void loop() {
   // Check line sensors — maximum priority
   checkLineSensors();
 
-
   if (isAvoidingLine) {
     motorss.SetAllSpeeds(Line_avoid_speed);
 
@@ -207,6 +159,7 @@ void loop() {
       case LINE_BOTH_SIDES:
         motorss.MoveBackward();
         break;
+
       case LINE_FRONT_LEFT:
         temp_ang = Line_avoid_ang_front_left;
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
@@ -295,7 +248,6 @@ void loop() {
       }
     }
   }
-  
+
   delay(20);
-  
 }

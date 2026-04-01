@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "motors.h"
 #include "constantes.h"
+#include "Kicker.h"
 
 #include "constantes.h"
 
@@ -15,6 +16,7 @@ extern PhotoMux sensors;
 
 extern PhotoMux::Sensor front[];
 extern const uint8_t FRONT_COUNT;
+extern Kicker kicker;
 
 extern camera frontCam;
 extern camera mirrorCam;

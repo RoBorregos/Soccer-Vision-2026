@@ -150,4 +150,6 @@ enum Robot_Mode_Mirror {
     Ball_behind
 };
 
+//boolean for blue and yellow goal exchange
+const bool yellow_enemy_goal = true;
 #endif

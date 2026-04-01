@@ -145,6 +145,7 @@ void loop() {
   // Read serial lines from both cameras
   frontCam.read();
   mirrorCam.read();
+  
   kicker.update(frontCam.ball_seen, frontCam.ball_distance);
 
   // Get current yaw from BNO

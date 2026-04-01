@@ -8,30 +8,20 @@ float setpoint = 0.0f; //Target angle for PID
 double last_valid_yaw = 0.0;
 double current_yaw = 0.0; //Current angle
 
-
-//variables for moving side to side when ball is not seen
+//Movement Variables
 bool sweepRight = true; //true for right, false for left
 
-
-
+//PhotoMux Variables
 unsigned long lineDetectedTime = 0; //ms that line is detected
 bool isAvoidingLine          = false; //Boolean value for detecting line
-LineSide detectedLineSide    = LINE_NONE;
+LineSide detectedLineSide    = LINE_NONE; //Variable to store which line is detected, possible values defined in constantes.h
 
 //Variable for angle control in different game situations
 float temp_ang = 0;
 
+//Variables for communication with cameras
 String serial1_line;
 String serial2_line;
-
-//New Variables
-
-
-
-//Kicker variables
-bool kicker_active = false; //Boolean value to activate the kicker
-unsigned long kicker_pulse_start = 0; //ms that the kicker was activated
-unsigned long last_kick_time = 0; //ms that the last kick was performed, used for cooldown management
 
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
@@ -85,33 +75,6 @@ bool isBallFront() {
       && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold;
 }
 
-//Checks if the ball is close enough to kick
-bool canKickNow() {
-  return frontCam.ball_seen
-  && frontCam.ball_distance < Kick_ball_distance_very_close;
-}
-
-//Manages kicker pulse timing and cooldown to fire the kicker when the ball is in range
-void updateKicker() {
-  unsigned long now = millis();
-
-  if (kicker_active) {
-    if (now - kicker_pulse_start >= Kicker_pulse_ms) {
-      digitalWrite(KICKER_PIN, LOW);
-      kicker_active = false;
-      last_kick_time = now;
-      Serial.println("Kicker OFF");
-    }
-    return;
-  }
-
-  if (canKickNow() && (now - last_kick_time >= Kicker_cooldown_ms)) {
-    digitalWrite(KICKER_PIN, HIGH);
-    kicker_active = true;
-    kicker_pulse_start = now;
-    Serial.println("Kicker ON");
-  }
-}
 
 //Function to determine the desired angle based on the goal angle and ball angle, with different logic depending on whether the goal is on the right or left. It also includes an orbiting behavior around the ball when it's in front of the robot but not aligned with the goal.
 void desired_ang_goal(float goal_ang, float ball_ang) {
@@ -159,7 +122,7 @@ void loop() {
   // Read serial lines from both cameras
   frontCam.read();
   mirrorCam.read();
-  updateKicker();
+  kicker.update(frontCam.ball_seen, frontCam.ball_distance);
 
   // Get current yaw from BNO
   bno.GetBNOData();

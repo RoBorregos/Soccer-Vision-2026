@@ -12,6 +12,8 @@ camera mirrorCam(Serial2, true);
 
 PhotoMux sensors(selectPins, muxPins);  // <- AGREGA ESTA LÍNEA
 
+Kicker kicker(KICKER_PIN, Kick_ball_distance_very_close, Kicker_pulse_ms, Kicker_cooldown_ms);
+
 PhotoMux::Sensor front[8] = {
   {3, 0}, 
   {3, 1}, 

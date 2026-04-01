@@ -125,4 +125,29 @@ const uint8_t Line_avoid_speed = 120;
 // |||||| BNO VARIABLES |||||
 const uint16_t BNO_setup_delay_ms = 300;
 
+//||||| Debuging variables ||||
+const bool debug_line_sensors = false;
+const bool debug_frontal_camera = false;
+const bool debug_mirror_camera = false;
+const bool debug_bno = false;
+const bool debug_photomux = false;
+const bool debug_movement = false;
+const bool debug_ball_infront = false;
+const bool debug_average_multiplex = false;
+
+//Variables for debugging ball front behavior
+enum Robot_Mode_Infront {
+    Aligning_with_goal_right,
+    Aligning_with_goal_left,
+    Moving_towards_goal
+    
+};
+
+//Variables for debugging ball mirror behaviour
+enum Robot_Mode_Mirror {
+    Ball_left,
+    Ball_right,
+    Ball_behind
+};
+
 #endif

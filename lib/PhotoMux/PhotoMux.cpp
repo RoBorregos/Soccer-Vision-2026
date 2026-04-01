@@ -68,6 +68,7 @@ float PhotoMux::readAverage(const Sensor* sensors, uint8_t size) {
         sum += readSensor(sensors[i].muxIndex, sensors[i].channel);
     }
     return sum / float(size);
+    
 }
 
 // - Get averaged value for a side

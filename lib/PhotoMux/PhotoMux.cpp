@@ -6,10 +6,11 @@ PhotoMux::PhotoMux(const uint8_t selectPins[3], const uint8_t muxPins[4]) {
     memcpy(_selectPins, selectPins, 3);
     memcpy(_muxPins, muxPins, 4);
 
-    thresholds[FRONT] = 2100; // - sample values
-    thresholds[LEFT] = 3000;
-    thresholds[RIGHT] = 6000;
-    thresholds[BACK] = 3045;
+    thresholds[FRONT] = 10000000000; // - sample values
+    thresholds[LEFT] = 18500000000;
+    thresholds[RIGHT] = 3000000000;
+    thresholds[BACK] = 60000;
+
 
     frontSensors = nullptr;
     leftSensors = nullptr;

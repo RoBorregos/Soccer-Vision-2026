@@ -15,6 +15,9 @@ extern Motors motorss;
 extern PhotoMux sensors;
 
 extern PhotoMux::Sensor front[];
+extern PhotoMux::Sensor back[];
+extern PhotoMux::Sensor left[];
+extern PhotoMux::Sensor right[];
 extern const uint8_t FRONT_COUNT;
 extern Kicker kicker;
 

@@ -6,11 +6,10 @@ PhotoMux::PhotoMux(const uint8_t selectPins[3], const uint8_t muxPins[4]) {
     memcpy(_selectPins, selectPins, 3);
     memcpy(_muxPins, muxPins, 4);
 
-    thresholds[FRONT] = 10000000000; // - sample values
-    thresholds[LEFT] = 18500000000;
-    thresholds[RIGHT] = 3000000000;
-    thresholds[BACK] = 60000;
-
+    thresholds[FRONT] = 60000; // - sample values
+    thresholds[LEFT] = 10000000000;
+    thresholds[RIGHT] = 20000;
+    thresholds[BACK] =70000;
 
     frontSensors = nullptr;
     leftSensors = nullptr;
@@ -68,7 +67,7 @@ float PhotoMux::readAverage(const Sensor* sensors, uint8_t size) {
         sum += readSensor(sensors[i].muxIndex, sensors[i].channel);
     }
     return sum / float(size);
-    
+
 }
 
 // - Get averaged value for a side

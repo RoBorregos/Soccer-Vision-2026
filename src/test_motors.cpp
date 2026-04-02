@@ -12,10 +12,6 @@ Motors motorss(
   BACK_LEFT_PWM, BACK_LEFT_IN1, BACK_LEFT_IN2
 );
 
-
-
-const uint8_t Speed = 100 ; //Robot speedbase - reduced for testing
-
 void setup() {
   
   Serial.begin(115200);
@@ -52,6 +48,7 @@ void loop() {
   //delay(1000);
   //motorss.StopMotors();
   //motorss.MoveLeft();
+  //delay(1000);
   //motorss.MoveMotors(0, Speed);
   //motorss.MoveMotorsImu(-90, Speed, 0);
 

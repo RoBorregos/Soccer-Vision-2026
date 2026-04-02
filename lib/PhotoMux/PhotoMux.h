@@ -31,6 +31,7 @@ public:
     bool isLineDetected(Side side); // - compare avg to threshold
     float getAverage(Side side);    // - averaged reading
     float getRawAverage(Side side); // - raw averaged reading
+    int readSensor(uint8_t muxIndex, uint8_t channel); // - read one sensor
 
 private:
     uint8_t _selectPins[3];     // - mux select pins
@@ -53,7 +54,7 @@ private:
 
     // - low-level helpers
     void selectChannel(uint8_t channel); // - set mux selects
-    int readSensor(uint8_t muxIndex, uint8_t channel); // - read one sensor
+    
     float readAverage(const Sensor* sensors, uint8_t size); // - avg on array
 
     void readWithoutMux(const Sensor* sensors, uint8_t size, float& average, float& rawAverage); // - direct read

@@ -26,8 +26,8 @@ String serial2_line;
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
   bool frontDetected = sensors.isLineDetected(FRONT);
-  bool leftDetected  = sensors.isLineDetected(LEFT);
-  bool rightDetected = false;
+  bool leftDetected  = false;
+  bool rightDetected = sensors.isLineDetected(RIGHT);
   bool backDetected  = sensors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
@@ -65,7 +65,7 @@ void checkLineSensors() {
     Serial.print("Line sensors - Front: ");
     Serial.print(frontDetected);
     Serial.print(", Left: ");
-    Serial.print(leftDetected);
+    Serial.print(false);
     Serial.print(", Right: ");
     Serial.print(rightDetected);
     Serial.print(", Back: ");
@@ -263,8 +263,7 @@ void loop() {
 
     } else if (mirrorCam.ball_seen) {
       Robot_Mode_Mirror currentMode;
-      Serial.print("Ball seen in mirror: ");
-      Serial.println(mirrorCam.ball_angle);
+
 
       if ((mirrorCam.ball_angle > Mirror_ball_right_ang_min) && (mirrorCam.ball_angle < Mirror_ball_right_ang_max)) {
         motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle + Mirror_ball_flank_offset), Speed, speed_w);
@@ -280,6 +279,8 @@ void loop() {
 
       if (debug_mirror_camera) {
         Serial.println("=== Mirrror_cam_section === ");
+        Serial.print("Ball seen in mirror: ");
+        Serial.println(mirrorCam.ball_angle);
         switch(currentMode){
           case Ball_right: Serial.println("Ball detected in right"); break;
           case Ball_left: Serial.println("Ball detected left"); break;

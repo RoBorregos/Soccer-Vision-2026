@@ -68,7 +68,7 @@ const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip 
 // Thresholds para detección de línea
 const int FRONT_THRESHOLD = 20000;
 const int LEFT_THRESHOLD  = 45000;
-const int RIGHT_THRESHOLD = 140000;
+const int RIGHT_THRESHOLD = 130000;
 const int BACK_THRESHOLD  = 80000;
 
 // Tiempo de corrección tras detectar línea

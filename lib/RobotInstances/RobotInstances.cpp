@@ -15,6 +15,28 @@ PhotoMux sensors(selectPins, muxPins);  // <- AGREGA ESTA LÍNEA
 Kicker kicker(KICKER_PIN, Kick_ball_distance_very_close, Kicker_pulse_ms, Kicker_cooldown_ms);
 
 PhotoMux::Sensor front[8] = { //front debe ser 0
+  {3, 0}, 
+  {3, 1}, 
+  {3, 2}, 
+  {3, 3}, 
+  {3, 4}, 
+  {3, 5}, 
+  {3, 6},
+  {3, 7}
+};
+
+PhotoMux::Sensor left[8] = {
+  {1, 0},
+  {1, 1},
+  {1, 2}, 
+  {1, 3}, 
+  {1, 4}, 
+  {1, 5},
+  {1, 6},
+  {1, 7}
+};
+
+PhotoMux::Sensor right[8] = {
   {0, 0}, 
   {0, 1}, 
   {0, 2}, 
@@ -23,26 +45,6 @@ PhotoMux::Sensor front[8] = { //front debe ser 0
   {0, 5}, 
   {0, 6},
   {0, 7}
-};
-
-PhotoMux::Sensor left[8] = {
-  {1, 0}, 
-  {1, 1}, 
-  {1, 2}, 
-  {1, 3}, 
-  {1, 4}, 
-  {1, 5}, 
-  {1, 6},
-  {1, 7}
-};
-
-PhotoMux::Sensor right[6] = {
-  {3, 0}, 
-  {3, 1},  
-  {3, 3}, 
-  {3, 4}, 
-  {3, 5}, 
-  {3, 7}
 };
 
 PhotoMux::Sensor back[8] = {

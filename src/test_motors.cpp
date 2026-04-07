@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <cmath>
 #include "motors.h"
-#include "BNO.h"
 #include "PID.h"
 #include "constantes.h"
 
@@ -50,6 +49,6 @@ void loop() {
   //motorss.MoveLeft();
   //delay(1000);
   //motorss.MoveMotors(0, Speed);
-  //motorss.MoveMotorsImu(-90, Speed, 0);
+  //motorss.MoveMotorsImu( 0 , Speed, speed_w);
 
 }

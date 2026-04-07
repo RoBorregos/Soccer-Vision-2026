@@ -26,8 +26,8 @@ String serial2_line;
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
   bool frontDetected = sensors.isLineDetected(FRONT);
-  bool leftDetected  = false;
-  bool rightDetected = sensors.isLineDetected(RIGHT);
+  bool leftDetected  = sensors.isLineDetected(LEFT);
+  bool rightDetected = false;
   bool backDetected  = sensors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
@@ -165,8 +165,6 @@ void loop() {
     Serial.println("=== BNO Data ===");
     Serial.print("Current Yaw: ");
     Serial.print(current_yaw);
-    Serial.print(" | Target: ");
-    Serial.print(bno.GetTarget());
     Serial.print(" | Error: ");
     Serial.println(error);
   }
@@ -226,7 +224,7 @@ void loop() {
 
     motorss.SetAllSpeeds(Speed);
 
-    if (isBallFront()) {
+    if (false) {
       desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
       motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       if (debug_ball_infront) {
@@ -243,7 +241,6 @@ void loop() {
 
 
     } else if (frontCam.ball_seen) {
-      bno.SetTarget(0.0f);
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
       ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
@@ -266,11 +263,11 @@ void loop() {
 
 
       if ((mirrorCam.ball_angle > Mirror_ball_right_ang_min) && (mirrorCam.ball_angle < Mirror_ball_right_ang_max)) {
-        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle + Mirror_ball_flank_offset), Speed, speed_w);
+        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle + Mirror_ball_flank_offset + 15), Speed, speed_w);
         currentMode = Ball_right;
 
       } else if ((mirrorCam.ball_angle < Mirror_ball_left_ang_min) && (mirrorCam.ball_angle > Mirror_ball_left_ang_max)) {
-        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle - Mirror_ball_flank_offset), Speed, speed_w);
+        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle - Mirror_ball_flank_offset - 15), Speed, speed_w);
         currentMode = Ball_left;
       } else {
         motorss.MoveOmnidirectionalBase(Mirror_ball_behind_ang, Speed, speed_w);

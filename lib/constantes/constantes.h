@@ -22,7 +22,7 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 
 
 //Robot speedbase
-const uint8_t Speed = 115; //Robot speedbase
+const uint8_t Speed = 100; //Robot speedbase
 
 // Motor pins
 const int BACK_RIGHT_IN1 = 10;
@@ -66,10 +66,10 @@ const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD = 1000000000;
-const int LEFT_THRESHOLD  = 1850000000;
-const int RIGHT_THRESHOLD = 3000000000;
-const int BACK_THRESHOLD  = 60000;
+const int FRONT_THRESHOLD = 20000;
+const int LEFT_THRESHOLD  = 45000;
+const int RIGHT_THRESHOLD = 130000;
+const int BACK_THRESHOLD  = 80000;
 
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 250;

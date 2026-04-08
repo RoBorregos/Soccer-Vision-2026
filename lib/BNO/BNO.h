@@ -15,6 +15,7 @@ private:
     double pitch_;
     double target_angle_;
     double difference_angle_;
+    double setpoint;
     Adafruit_BNO055 bno_{55, 0x28, &Wire};
 
 public:

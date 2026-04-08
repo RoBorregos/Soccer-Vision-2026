@@ -6,11 +6,6 @@ PhotoMux::PhotoMux(const uint8_t selectPins[3], const uint8_t muxPins[4]) {
     memcpy(_selectPins, selectPins, 3);
     memcpy(_muxPins, muxPins, 4);
 
-    thresholds[FRONT] = 2100; // - sample values
-    thresholds[LEFT] = 3000;
-    thresholds[RIGHT] = 6000;
-    thresholds[BACK] = 3045;
-
     frontSensors = nullptr;
     leftSensors = nullptr;
     rightSensors = nullptr;
@@ -21,7 +16,7 @@ PhotoMux::PhotoMux(const uint8_t selectPins[3], const uint8_t muxPins[4]) {
 
 // - Setup mux select pins as outputs
 void PhotoMux::begin() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < max_channel; i++) {
         pinMode(_selectPins[i], OUTPUT);
     }
 }
@@ -67,6 +62,7 @@ float PhotoMux::readAverage(const Sensor* sensors, uint8_t size) {
         sum += readSensor(sensors[i].muxIndex, sensors[i].channel);
     }
     return sum / float(size);
+
 }
 
 // - Get averaged value for a side

@@ -31,7 +31,12 @@ void BNO055::InitializeBNO()
     }
     delay(1000);
     bno_.setExtCrystalUse(true);
+    delay(300);
+    setpoint = GetYaw();
+    SetTarget(setpoint);
+    delay(300);
     Serial.println("BNO055 initialized successfully!");
+
 }
 double BNO055::NormalizeAngle(double angle)
 {

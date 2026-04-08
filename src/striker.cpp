@@ -7,178 +7,148 @@ unsigned long last_time = 0;
 float setpoint = 0.0f; //Target angle for PID
 double last_valid_yaw = 0.0;
 double current_yaw = 0.0; //Current angle
-double last_speed_w = 0.0; //No use for now
 
-//variables for moving side to side when ball is not seen
-bool right = true; //true for right, false for left
+//Movement Variables
+bool sweepRight = true; //true for right, false for left
 
-//Variables for Motor control
-const uint8_t Speed = 115; //Robot speedbase
-
-//Variables for avoiding the lines
-enum LineSide { LINE_NONE, LINE_FRONT, LINE_LEFT, LINE_RIGHT, LINE_BOTH_SIDES, LINE_FRONT_LEFT, LINE_FRONT_RIGHT, LINE_ALL_SIDES };
-
-unsigned long lineDetectedTime = 0;
-bool isAvoidingLine          = false;
-LineSide detectedLineSide    = LINE_NONE;
+//PhotoMux Variables
+unsigned long lineDetectedTime = 0; //ms that line is detected
+bool isAvoidingLine          = false; //Boolean value for detecting line
+LineSide detectedLineSide    = LINE_NONE; //Variable to store which line is detected, possible values defined in constantes.h
 
 //Variable for angle control in different game situations
 float temp_ang = 0;
 
+//Variables for communication with cameras
 String serial1_line;
 String serial2_line;
 
-//New Variables
-float Ball_distance_threshold   = 125.0f; // Distance threshold to consider the ball is in front of the robot
-float Ball_infront_ang_threshold = 25.0f; // Angle threshold to consider the ball is in front of the robot
-float Deadband_4_ballgoalangle  = 20.0f;  // Deadband for ball-goal angle when the ball is in front
+bool ready_2_shoot = false;
 
-// PID and yaw
-const float PID_output_max = 180.0f;
-const float PID_output_min = -180.0f;
-const float Yaw_zero_glitch_threshold  = 0.001; // Minimum yaw magnitude to consider a real reading
-const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude that triggers glitch detection
-//Variables for front
-const float Ball_front_angle_deadband = 6.0f;
-const float Ball_front_angle_clamp = 90.0f;
-const float Goal_heading_offset_right =  10.0f; // Added when goal is on the right
-const float Goal_heading_offset_left  = -10.0f; // Added when goal is on the left
-const float Ball_orbit_offset = 80.0f;
-const float Ball_front_min_lateral_angle = 10.0f;
-
-// Mirror camera — angular window where the ball is considered to be on the right or left flank
-const float Mirror_ball_right_ang_min =  45.0f;
-const float Mirror_ball_right_ang_max = 135.0f;
-const float Mirror_ball_left_ang_min  = -45.0f;
-const float Mirror_ball_left_ang_max  = -135.0f;
-
-const float Mirror_ball_flank_offset = 30.0f;
-const float Mirror_ball_behind_ang = 125.0f;
-const unsigned long Search_sweep_interval_ms = 1000;
-
-// Line avoidance movement angles
-const float Line_avoid_ang_front      = 180.0f;  // Ball is behind robot, push backward
-const float Line_avoid_ang_front_left =  45.0f;  // Diagonal right-backward
-const float Line_avoid_ang_front_right = -45.0f; // Diagonal left-backward
-const float Line_avoid_ang_left       =  90.0f;  // Strafe right
-const float Line_avoid_ang_right      = -90.0f;  // Strafe left
-
-// Line avoidance speed override
-const uint8_t Line_avoid_speed = 120;
-
-// Search sweep lateral angles
-const float Search_sweep_ang_right = -90.0f;
-const float Search_sweep_ang_left  =  90.0f;
-
-// BNO setup delay (ms)
-const uint16_t BNO_setup_delay_ms = 300;
-
-
-bool isLineDetectedDirect(const uint8_t* pins, uint8_t count, int threshold) {
-  long sum = 0;
-  for (uint8_t i = 0; i < count; i++) {
-    int v = analogRead(pins[i]);
-    sum += (long)v * v;
-  }
-  float avg = sum / float(count);
-  return avg > threshold;
-}
-
+//Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
-  bool frontDetected = isLineDetectedDirect(FRONT_PINS, FRONT_COUNT, FRONT_THRESHOLD);
-  bool leftDetected  = isLineDetectedDirect(LEFT_PINS,  LEFT_COUNT,  LEFT_THRESHOLD);
-  bool rightDetected = isLineDetectedDirect(RIGHT_PINS, RIGHT_COUNT, RIGHT_THRESHOLD);
+  bool frontDetected = phototransistors.isLineDetected(FRONT);
+  bool leftDetected  = phototransistors.isLineDetected(LEFT);
+  bool rightDetected = phototransistors.isLineDetected(RIGHT);
+  bool backDetected  = phototransistors.isLineDetected(BACK);
 
-  if (frontDetected || leftDetected || rightDetected) {
+  if (frontDetected || leftDetected || rightDetected || backDetected) {
+
     lineDetectedTime = millis();
     isAvoidingLine   = true;
 
     if (frontDetected && leftDetected && rightDetected) {
       detectedLineSide = LINE_ALL_SIDES;
-      Serial.println("LINE DETECTED: ALL SIDES -> Moving backward");
+
     } else if (leftDetected && rightDetected) {
       detectedLineSide = LINE_BOTH_SIDES;
-      Serial.println("LINE DETECTED: BOTH SIDES -> Moving backward");
     } else if (frontDetected && leftDetected) {
       detectedLineSide = LINE_FRONT_LEFT;
-      Serial.println("LINE DETECTED: FRONT LEFT -> Moving backward and right");
     } else if (frontDetected && rightDetected) {
       detectedLineSide = LINE_FRONT_RIGHT;
-      Serial.println("LINE DETECTED: FRONT RIGHT -> Moving backward and left");
     } else if (frontDetected) {
       detectedLineSide = LINE_FRONT;
-      Serial.println("LINE DETECTED: FRONT -> Moving backward");
     } else if (leftDetected) {
       detectedLineSide = LINE_LEFT;
-      Serial.println("LINE DETECTED: LEFT -> Moving right");
     } else if (rightDetected) {
       detectedLineSide = LINE_RIGHT;
-      Serial.println("LINE DETECTED: RIGHT -> Moving left");
+    } else if (backDetected) {
+      detectedLineSide = LINE_BACK;
     }
+
   } else if (isAvoidingLine) {
     if (millis() - lineDetectedTime >= correctionTime) {
       isAvoidingLine   = false;
       detectedLineSide = LINE_NONE;
-      Serial.println("LINE ESCAPE END");
     }
+  }
+  if (debug_line_sensors) {
+    Serial.println("=== Line Detection ====");
+    Serial.print("Line sensors - Front: ");
+    Serial.print(frontDetected);
+    Serial.print(", Left: ");
+    Serial.print(leftDetected);
+    Serial.print(", Right: ");
+    Serial.print(rightDetected);
+    Serial.print(", Back: ");
+    Serial.print(backDetected);
+    Serial.print(" | Detected Line Side: ");
+    Serial.println(detectedLineSide);
   }
 }
 
+//Function that checks if the ball is in front of the robot using the front camera, distance and angle.
 bool isBallFront() {
   return frontCam.ball_seen
       && frontCam.ball_distance < Ball_distance_threshold
       && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold;
 }
 
+
+//Function to determine the desired angle based on the goal angle and ball angle, with different logic depending on whether the goal is on the right or left. It also includes an orbiting behavior around the ball when it's in front of the robot but not aligned with the goal.
 void desired_ang_goal(float goal_ang, float ball_ang) {
+  Robot_Mode_Infront currentMode; 
   if (goal_ang > 0) { // Goal is on the right
     if (ball_ang < -Ball_front_min_lateral_angle) {
       if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
+        currentMode = Aligning_with_goal_right;
         temp_ang = ball_ang - Ball_orbit_offset; // Move left to align the ball
       } else {
+        
         bno.SetTarget(goal_ang + Goal_heading_offset_right);
         temp_ang = goal_ang;
+        currentMode = Moving_towards_goal;
       }
     } else {
       bno.SetTarget(goal_ang);
       temp_ang = goal_ang;
+      currentMode = Moving_towards_goal;
     }
   }
   if (goal_ang < 0) { // Goal is on the left
     if (ball_ang > Ball_front_min_lateral_angle) {
       if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
         temp_ang = ball_ang + Ball_orbit_offset; // Move right to align the ball
+        currentMode = Aligning_with_goal_left;
+      } else {
+        bno.SetTarget(goal_ang + Goal_heading_offset_left);
+        temp_ang = goal_ang;
+        currentMode = Moving_towards_goal;
       }
     } else {
       bno.SetTarget(goal_ang + Goal_heading_offset_left);
       temp_ang = goal_ang;
+      currentMode = Moving_towards_goal;
     }
   }
-  Serial.print("Temp ang is: ");
-  Serial.println(temp_ang);
-  Serial.print("Ball angle is: ");
-  Serial.println(ball_ang);
+
+  
+  if (debug_ball_infront) {
+
+    Serial.print(F("==== Mode: ===="));
+    switch (currentMode) {
+      case Aligning_with_goal_right: Serial.println(("Aligning with goal right")); break;
+      case Aligning_with_goal_left:  Serial.println(("Aligning with goal left"));  break;
+      case Moving_towards_goal:      Serial.println(("Moving towards goal"));       break;
+    }
+    }
 }
 
 void setup() {
-  Serial.begin(115200);
   initialize_robot();
-  delay(BNO_setup_delay_ms);
-  bno.GetBNOData();
-  setpoint = (float)bno.GetYaw();
-  bno.SetTarget(setpoint);
-  delay(BNO_setup_delay_ms);
 }
 
 void loop() {
+
   // Read serial lines from both cameras
   frontCam.read();
   mirrorCam.read();
+  
+  kicker.update(frontCam.ball_seen, frontCam.ball_distance);
 
   // Get current yaw from BNO
   bno.GetBNOData();
   current_yaw = bno.GetYaw();
-  Serial.println(current_yaw);
 
   if (fabs(current_yaw) < Yaw_zero_glitch_threshold && fabs(last_valid_yaw) > Yaw_last_valid_min_change) {
     current_yaw = last_valid_yaw;
@@ -189,6 +159,14 @@ void loop() {
   // Obtain error for PID
   double error = bno.GetError();
 
+  if (debug_bno) {
+    Serial.println("=== BNO Data ===");
+    Serial.print("Current Yaw: ");
+    Serial.print(current_yaw);
+    Serial.print(" | Error: ");
+    Serial.println(error);
+  }
+
   // Calculate PID output for angular correction
   double speed_w = pid.Calculate(error);
   speed_w = constrain(speed_w, PID_output_min, PID_output_max);
@@ -196,7 +174,7 @@ void loop() {
   // Check line sensors — maximum priority
   checkLineSensors();
 
-  if (false) {
+  if (isAvoidingLine) {
     motorss.SetAllSpeeds(Line_avoid_speed);
 
     switch (detectedLineSide) {
@@ -230,6 +208,11 @@ void loop() {
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
         break;
 
+      case LINE_BACK:
+        temp_ang = Line_avoid_ang_back;
+        motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
+        break;
+
       default:
         motorss.MoveBackward();
         break;
@@ -242,57 +225,95 @@ void loop() {
     if (isBallFront()) {
       desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
       motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
-      Serial.print("Ball in front, moving with temp_ang: ");
-      Serial.println(temp_ang);
-      Serial.print("Goal angle: ");
-      Serial.println(frontCam.goal_angle);
+      if (debug_ball_infront) {
+        Serial.println("==== Data infront ====");
+        Serial.println("Ball detected infront of robot");
+        Serial.print("Calculated temp_ang: ");
+        Serial.println(temp_ang);
+        Serial.print("Goal angle: ");
+        Serial.println(frontCam.goal_angle);
+        Serial.print("Ball angle: ");
+        Serial.println(frontCam.ball_angle);
+      }
+
 
     } else if (frontCam.ball_seen) {
-      bno.SetTarget(0.0f);
-      Serial.print("Ball seen front: ");
+      ; // When ball is seen but not in front, orient towards the ball
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
       ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
+      float x = constrain(ang / Ball_front_angle_clamp, -1.0, 1.0);
+      float curved = powf(fabs(x), 3.0f) * (x >= 0 ? 1 : -1);
+      temp_ang = curved * Ball_front_angle_clamp;
+      motorss.MoveOmnidirectionalBase((int)ang, Speed, speed_w);
+      
+      
+      if (debug_frontal_camera){
+      Serial.println("=== Frontal Camera Data ====");
+      Serial.print("Ball angle : ");
       Serial.println(ang);
       Serial.print("Goal angle: ");
       Serial.println(frontCam.goal_angle);
       Serial.print("Ball distance: ");
       Serial.println(frontCam.ball_distance);
-      float x = constrain(ang / Ball_front_angle_clamp, -1.0, 1.0);
-      float curved = x * abs(x);
-      temp_ang = curved * Ball_front_angle_clamp;
-      motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
+      }
 
     } else if (mirrorCam.ball_seen) {
-      Serial.print("Ball seen in mirror: ");
-      Serial.println(mirrorCam.ball_angle);
+      bno.SetTarget(0.0f);
+
+      Robot_Mode_Mirror currentMode;
+
 
       if ((mirrorCam.ball_angle > Mirror_ball_right_ang_min) && (mirrorCam.ball_angle < Mirror_ball_right_ang_max)) {
-        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle + Mirror_ball_flank_offset), Speed, speed_w);
-        Serial.println("Moving right");
+        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle + Mirror_ball_flank_offset), Speed_lateral_movement, speed_w);
+        currentMode = Ball_right;
+
       } else if ((mirrorCam.ball_angle < Mirror_ball_left_ang_min) && (mirrorCam.ball_angle > Mirror_ball_left_ang_max)) {
-        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle - Mirror_ball_flank_offset), Speed, speed_w);
-        Serial.println("Moving left");
+        motorss.MoveOmnidirectionalBase((int)(mirrorCam.ball_angle - Mirror_ball_flank_offset), Speed_lateral_movement, speed_w);
+        currentMode = Ball_left;
       } else {
-        Serial.println("Ball is behind");
-        motorss.MoveOmnidirectionalBase(Mirror_ball_behind_ang, Speed, speed_w);
+        motorss.MoveOmnidirectionalBase(Mirror_ball_behind_ang, Speed_lateral_movement, speed_w);
+        currentMode = Ball_behind;
+      }
+
+      if (debug_mirror_camera) {
+        Serial.println("=== Mirrror_cam_section === ");
+        Serial.print("Ball seen in mirror: ");
+        Serial.println(mirrorCam.ball_angle);
+        switch(currentMode){
+          case Ball_right: Serial.println("Ball detected in right"); break;
+          case Ball_left: Serial.println("Ball detected left"); break;
+          case Ball_behind: Serial.println("Ball detected behind"); break;
+        }
+
       }
 
     } else {
       if (millis() - last_time >= Search_sweep_interval_ms) {
         last_time = millis();
-        right = !right;
+        sweepRight = !sweepRight;
       }
 
-      if (right) {
+      if (sweepRight) {
         temp_ang = Search_sweep_ang_right;
         motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       } else {
         temp_ang = Search_sweep_ang_left;
         motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       }
+      if (debug_movement){
+        Serial.println("=== Robot Looking for Ball ===");
+        if (sweepRight) {
+          Serial.println("Moving right");
+        }
+        else{
+          Serial.println("Moving left");
+        }
+      }
     }
   }
+
+
 
   delay(20);
 }

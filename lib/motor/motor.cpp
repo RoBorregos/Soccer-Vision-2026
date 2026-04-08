@@ -20,16 +20,19 @@ void Motor::InitializeMotor()
 
 void Motor::SetSpeed(uint8_t speed)
 {
+    (speed >= 0) ? MovePositive(): MoveNegative();
+    constrain(abs((int)speed), 0, 255);
     analogWrite(pwm_pin_, speed);
+    
 }
 
-void Motor::MoveForward()
+void Motor::MovePositive()
 {
     digitalWrite(in1_, HIGH);
     digitalWrite(in2_, LOW);
 }
 
-void Motor::MoveBackward()
+void Motor::MoveNegative()
 {
     digitalWrite(in1_, LOW);
     digitalWrite(in2_, HIGH);

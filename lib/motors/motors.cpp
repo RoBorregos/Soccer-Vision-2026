@@ -54,40 +54,40 @@ void Motors::StopMotors()
 // They will be deleted in the future, but for now they are useful to check if the motors are working and if the connections are correct
 void Motors::MoveForward()
 {
-    front_left.MoveForward();
-    front_right.MoveForward();
-    back_right.MoveBackward();
-    back_left.MoveBackward();
+    front_left.MovePositive();
+    front_right.MovePositive();
+    back_right.MovePositive();
+    back_left.MovePositive();
 }
 
 void Motors::MoveRight()
 {
-    front_left.MoveForward();
-    front_right.MoveBackward();
-    back_right.MoveBackward();
-    back_left.MoveForward();
+    front_left.MovePositive();
+    front_right.MoveNegative();
+    back_right.MoveNegative();
+    back_left.MovePositive();
 }
 
 void Motors::MoveLeft()
 {
-    front_left.MoveBackward();
-    front_right.MoveForward();
-    back_right.MoveForward();
-    back_left.MoveBackward();
+    front_left.MoveNegative();
+    front_right.MovePositive();
+    back_right.MovePositive();
+    back_left.MoveNegative();
 }
 
 void Motors::MoveBackward()
 {
-    front_left.MoveBackward();
-    front_right.MoveBackward();
-    back_right.MoveForward();
-    back_left.MoveForward();
+    front_left.MoveNegative();
+    front_right.MoveNegative();
+    back_right.MovePositive();
+    back_left.MovePositive();
 }
 
-void Motors::Movefront_left() { front_left.MoveForward(); }
-void Motors::Movefront_right() { front_right.MoveForward(); }
-void Motors::Moveback_right() { back_right.MoveForward(); }
-void Motors::Moveback_left() { back_left.MoveForward(); }
+void Motors::Movefront_left() { front_left.MovePositive(); }
+void Motors::Movefront_right() { front_right.MovePositive(); }
+void Motors::Moveback_right() { back_right.MovePositive(); }
+void Motors::Moveback_left() { back_left.MovePositive(); }
 
 // This is the main function for moving the robot in any direction, it calculates the necessary speed and direction of each wheel and adds
 // the PID for the robot to move in the desired direction while looking at 0 degrees
@@ -95,28 +95,14 @@ void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_ou
 {
     // degree = degree + 90; // Ajuste para que 0° sea hacia adelante
 
-    float rawSpeed1 = cos((322.5 + degree) * PI / 180) * speed;
-    float rawSpeed2 = cos((37.5 + degree) * PI / 180) * speed;
-    float rawSpeed3 = cos((142.5 + degree) * PI / 180) * speed;
-    float rawSpeed4 = cos((217.5 + degree) * PI / 180) * speed;
+    float Speed_Front_Left = (cos((322.5 + degree) * PI / 180) * speed) + pid_output;
+    float Speed_Front_Right = (cos((37.5 + degree) * PI / 180) * speed) - pid_output;
+    float Speed_Back_Right = (cos((142.5 + degree) * PI / 180) * speed) + pid_output;
+    float Speed_Back_Left = (cos((217.5 + degree) * PI / 180) * speed) - pid_output;
 
-    float speed1 = rawSpeed1 + pid_output;
-    float speed2 = rawSpeed2 - pid_output;
-    float speed3 = rawSpeed3 + pid_output;
-    float speed4 = rawSpeed4 - pid_output;
 
-    int pwm1 = constrain(abs((int)speed1), 0, 255);
-    int pwm2 = constrain(abs((int)speed2), 0, 255);
-    int pwm3 = constrain(abs((int)speed3), 0, 255);
-    int pwm4 = constrain(abs((int)speed4), 0, 255);
-
-    front_left.SetSpeed(pwm1);
-    front_right.SetSpeed(pwm2);
-    back_right.SetSpeed(pwm3);
-    back_left.SetSpeed(pwm4);
-
-    (speed1 >= 0) ? front_left.MoveForward() : front_left.MoveBackward();
-    (speed2 >= 0) ? front_right.MoveForward() : front_right.MoveBackward();
-    (speed3 >= 0) ? back_right.MoveForward() : back_right.MoveBackward();
-    (speed4 >= 0) ? back_left.MoveForward() : back_left.MoveBackward();
+    front_left.SetSpeed(Speed_Front_Left);
+    front_right.SetSpeed(Speed_Front_Right);
+    back_right.SetSpeed(Speed_Back_Right);
+    back_left.SetSpeed(Speed_Back_Left);
 }

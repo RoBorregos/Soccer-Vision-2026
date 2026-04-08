@@ -1,7 +1,7 @@
 #include "camera.h"
 
-camera::camera(HardwareSerial& serial, bool isMirror)
-: _serial(serial), _isMirror(isMirror),
+camera::camera(HardwareSerial& serial, bool isMirror, bool enemy_yellow)
+: _serial(serial), _isMirror(isMirror), _enemy_yellow(enemy_yellow),
     ball_distance(0), ball_angle(0),
     goal_distance(0), goal_angle(0),
     own_distance(0),  own_angle(0),
@@ -30,8 +30,16 @@ void camera::process(const String& line) {
                       &dist, &ang, &g_dist, &g_ang, &o_dist, &o_ang);
   if (parsed == 6) {
     ball_distance = dist;   ball_angle = ang;
+    if (_enemy_yellow){
     goal_distance = g_dist; goal_angle = g_ang;
     own_distance  = o_dist; own_angle  = o_ang;
+    }
+  else {
+    goal_distance = o_dist; goal_angle = o_ang;
+    own_distance  = g_dist; own_angle  = g_ang;
+
+  }
+
 
     if (_isMirror) {
       goal_angle += 25.0f;

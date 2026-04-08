@@ -56,9 +56,11 @@ PhotoMux::Sensor back[8] = {
 };
 
 void initialize_robot() {
+  Serial.begin(115200);
   Serial1.begin(115200);
   Serial2.begin(115200);
   bno.InitializeBNO();
+  bno.GetBNOData();
   motorss.InitializeMotors();
   pinMode(KICKER_PIN, OUTPUT);
   digitalWrite(KICKER_PIN, LOW);

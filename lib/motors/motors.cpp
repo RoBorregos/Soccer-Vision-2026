@@ -55,7 +55,7 @@ void Motors::StopMotors()
 void Motors::MoveForward()
 {
     front_left.MovePositive();
-    front_right.MovePositive());
+    front_right.MovePositive();
     back_right.MovePositive();
     back_left.MovePositive();
 }
@@ -63,7 +63,7 @@ void Motors::MoveForward()
 void Motors::MoveRight()
 {
     front_left.MovePositive();
-    front_right.MoveNegative());
+    front_right.MoveNegative();
     back_right.MoveNegative();
     back_left.MovePositive();
 }

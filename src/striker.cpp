@@ -135,13 +135,7 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
 }
 
 void setup() {
-  Serial.begin(115200);
   initialize_robot();
-  delay(BNO_setup_delay_ms);
-  bno.GetBNOData();
-  setpoint = (float)bno.GetYaw();
-  bno.SetTarget(setpoint);
-  delay(BNO_setup_delay_ms);
 }
 
 void loop() {

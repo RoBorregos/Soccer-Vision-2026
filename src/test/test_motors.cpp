@@ -1,10 +1,7 @@
 #include <Arduino.h>
 #include <cmath>
 #include "motors.h"
-<<<<<<<< HEAD:src/test/test_motors.cpp
-========
 #include "BNO.h"
->>>>>>>> test:src/test_motors.cpp
 #include "PID.h"
 #include "constantes.h"
 
@@ -14,14 +11,9 @@ Motors motorss(
   BACK_RIGHT_PWM, BACK_RIGHT_IN1, BACK_RIGHT_IN2,
   BACK_LEFT_PWM, BACK_LEFT_IN1, BACK_LEFT_IN2
 );
-<<<<<<<< HEAD:src/test/test_motors.cpp
-========
-
 
 
 const uint8_t Speed = 100 ; //Robot speedbase - reduced for testing
->>>>>>>> test:src/test_motors.cpp
-
 void setup() {
   
   Serial.begin(115200);
@@ -60,6 +52,6 @@ void loop() {
   //motorss.MoveLeft();
   //delay(1000);
   //motorss.MoveMotors(0, Speed);
-  //motorss.MoveMotorsImu( 0 , Speed, speed_w);
+  motorss.MoveOmnidirectionalBase( 0 , Speed, 0);
 
 }

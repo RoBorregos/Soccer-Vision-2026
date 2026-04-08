@@ -13,8 +13,8 @@ public:
     void InitializeMotor();
 
     // Control de movimiento
-    void MoveForward();
-    void MoveBackward();
+    void MovePositive();
+    void MoveNegative();
     void StopMotor();
 
     // Control de velocidad (0–255)

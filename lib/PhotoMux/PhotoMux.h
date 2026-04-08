@@ -1,6 +1,6 @@
 
-#ifndef PHOTOSENSORSMUX_H
-#define PHOTOSENSORSMUX_H
+#ifndef PhotoMux_h
+#define PhotoMux_h
 
 #include <Arduino.h>
 
@@ -51,6 +51,9 @@ private:
 
     Sensor* backSensors;
     uint8_t backCount;
+
+    int max_channel = 3;
+
 
     // - low-level helpers
     void selectChannel(uint8_t channel); // - set mux selects

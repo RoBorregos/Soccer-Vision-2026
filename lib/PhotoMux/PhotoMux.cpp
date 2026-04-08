@@ -6,11 +6,6 @@ PhotoMux::PhotoMux(const uint8_t selectPins[3], const uint8_t muxPins[4]) {
     memcpy(_selectPins, selectPins, 3);
     memcpy(_muxPins, muxPins, 4);
 
-    thresholds[FRONT] = 60000; // - sample values
-    thresholds[LEFT] = 20000;
-    thresholds[RIGHT] = 80000;
-    thresholds[BACK] =70000;
-
     frontSensors = nullptr;
     leftSensors = nullptr;
     rightSensors = nullptr;
@@ -21,7 +16,7 @@ PhotoMux::PhotoMux(const uint8_t selectPins[3], const uint8_t muxPins[4]) {
 
 // - Setup mux select pins as outputs
 void PhotoMux::begin() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < max_channel; i++) {
         pinMode(_selectPins[i], OUTPUT);
     }
 }

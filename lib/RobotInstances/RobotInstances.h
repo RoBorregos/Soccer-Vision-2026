@@ -12,7 +12,7 @@
 extern BNO055 bno;
 extern PID pid;
 extern Motors motorss;
-extern PhotoMux sensors;
+extern PhotoMux phototransistors;
 
 extern PhotoMux::Sensor front[];
 extern PhotoMux::Sensor back[];

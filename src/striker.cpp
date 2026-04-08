@@ -27,10 +27,10 @@ bool ready_2_shoot = false;
 
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
-  bool frontDetected = sensors.isLineDetected(FRONT);
-  bool leftDetected  = sensors.isLineDetected(LEFT);
-  bool rightDetected = sensors.isLineDetected(RIGHT);
-  bool backDetected  = sensors.isLineDetected(BACK);
+  bool frontDetected = phototransistors.isLineDetected(FRONT);
+  bool leftDetected  = phototransistors.isLineDetected(LEFT);
+  bool rightDetected = phototransistors.isLineDetected(RIGHT);
+  bool backDetected  = phototransistors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
 

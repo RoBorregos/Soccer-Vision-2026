@@ -10,11 +10,11 @@ Motors motorss(
 camera frontCam(Serial1);
 camera mirrorCam(Serial2, true);
 
-PhotoMux sensors(selectPins, muxPins);  // <- AGREGA ESTA LÍNEA
+PhotoMux phototransistors(selectPins, muxPins);  // <- AGREGA ESTA LÍNEA
 
 Kicker kicker(KICKER_PIN, Kick_ball_distance_very_close, Kicker_pulse_ms, Kicker_cooldown_ms);
 
-PhotoMux::Sensor front[8] = { //front debe ser 0
+PhotoMux::Sensor front[8] = {
   {3, 0}, 
   {3, 1}, 
   {3, 2}, 
@@ -62,17 +62,16 @@ void initialize_robot() {
   motorss.InitializeMotors();
   pinMode(KICKER_PIN, OUTPUT);
   digitalWrite(KICKER_PIN, LOW);
-  analogReadResolution(12);
   //Photosensors
-  sensors.begin(); 
+  phototransistors.begin(); 
   analogReadResolution(12);
-  sensors.configureSide(FRONT, front, 8);
-  sensors.configureSide(BACK, back, 8);
-  sensors.configureSide(LEFT, left, 8);
-  sensors.configureSide(RIGHT, right, 5);
+  phototransistors.configureSide(FRONT, front, 8);
+  phototransistors.configureSide(BACK, back, 8);
+  phototransistors.configureSide(LEFT, left, 8);
+  phototransistors.configureSide(RIGHT, right, 5);
 
-  sensors.setThreshold(FRONT, FRONT_THRESHOLD);
-  sensors.setThreshold(LEFT,  LEFT_THRESHOLD);
-  sensors.setThreshold(RIGHT, RIGHT_THRESHOLD);
-  sensors.setThreshold(BACK,  BACK_THRESHOLD);
+  phototransistors.setThreshold(FRONT, FRONT_THRESHOLD);
+  phototransistors.setThreshold(LEFT,  LEFT_THRESHOLD);
+  phototransistors.setThreshold(RIGHT, RIGHT_THRESHOLD);
+  phototransistors.setThreshold(BACK,  BACK_THRESHOLD);
 }

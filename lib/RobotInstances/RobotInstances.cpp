@@ -36,15 +36,12 @@ PhotoMux::Sensor left[8] = {
   {1, 7}
 };
 
-PhotoMux::Sensor right[8] = {
+PhotoMux::Sensor right[5] = {
   {0, 0}, 
   {0, 1}, 
-  {0, 2}, 
   {0, 3}, 
   {0, 4}, 
   {0, 5}, 
-  {0, 6},
-  {0, 7}
 };
 
 PhotoMux::Sensor back[8] = {
@@ -72,7 +69,7 @@ void initialize_robot() {
   sensors.configureSide(FRONT, front, 8);
   sensors.configureSide(BACK, back, 8);
   sensors.configureSide(LEFT, left, 8);
-  sensors.configureSide(RIGHT, right, 6);
+  sensors.configureSide(RIGHT, right, 5);
 
   sensors.setThreshold(FRONT, FRONT_THRESHOLD);
   sensors.setThreshold(LEFT,  LEFT_THRESHOLD);

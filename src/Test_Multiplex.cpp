@@ -10,7 +10,7 @@ void setup() {
   sensors.configureSide(FRONT, front, 8);
   sensors.configureSide(BACK,  back,  8);
   sensors.configureSide(LEFT,  left,  8);
-  sensors.configureSide(RIGHT, right, 8);
+  sensors.configureSide(RIGHT, right, 5);
 
   sensors.setThreshold(FRONT, FRONT_THRESHOLD);
   sensors.setThreshold(BACK,  BACK_THRESHOLD);

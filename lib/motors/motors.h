@@ -1,5 +1,5 @@
-#ifndef motores_h
-#define motores_h
+#ifndef motors_h
+#define motors_h
 
 #include "Arduino.h"
 #include "motor.h"

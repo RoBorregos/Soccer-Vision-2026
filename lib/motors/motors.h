@@ -30,9 +30,9 @@ public:
     void Movefront_right();
     void Moveback_right();
     void Moveback_left();
-    void MoveMotors(int degree, uint8_t speed);
+    void MoveMotors(int degree, int16_t speed);
     void GetAllSpeeds();
-    void MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_output);
+    void MoveOmnidirectionalBase(double degree, int16_t speed, double pid_output);
 };
 
 #endif

@@ -18,7 +18,7 @@ public:
     void StopMotor();
 
     // Control de velocidad (-255 to 255, sign controls direction)
-    void SetSpeed(int16_t speed);
+    void SetSpeed(float speed);
 
     // Getters útiles para debug
     uint8_t GetPwmPin();

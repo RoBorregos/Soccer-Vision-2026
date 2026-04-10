@@ -18,14 +18,16 @@ void Motor::InitializeMotor()
     pinMode(pwm_pin_, OUTPUT);
 }
 
-void Motor::SetSpeed(int16_t speed)
+
+void Motor::SetSpeed(float speed)
 {
     if (speed >= 0) {
         MovePositive();
     } else {
         MoveNegative();
     }
-    analogWrite(pwm_pin_, constrain(abs(speed), 0, 255));
+    // Cast only here, at the hardware boundary
+    analogWrite(pwm_pin_, constrain((int)abs(speed), 0, 255));
 }
 
 void Motor::MovePositive()

@@ -100,6 +100,16 @@ void Motors::MoveOmnidirectionalBase(double degree, int16_t speed, double pid_ou
     float Speed_Back_Right = (cos((142.5 + degree) * PI / 180) * speed) + pid_output;
     float Speed_Back_Left = (cos((217.5 + degree) * PI / 180) * speed) - pid_output;
 
+    Serial.print("Calculated Speeds - FL: ");
+    Serial.print(Speed_Front_Left);
+    Serial.print(", FR: ");
+    Serial.print(Speed_Front_Right);
+    Serial.print(", BR: ");
+    Serial.print(Speed_Back_Right);
+    Serial.print(", BL: ");
+    Serial.println(Speed_Back_Left);
+    
+
 
     front_left.SetSpeed(Speed_Front_Left);
     front_right.SetSpeed(Speed_Front_Right);

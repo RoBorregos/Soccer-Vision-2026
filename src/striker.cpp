@@ -175,8 +175,6 @@ void loop() {
   checkLineSensors();
 
   if (isAvoidingLine) {
-    motorss.SetAllSpeeds(Line_avoid_speed);
-
     switch (detectedLineSide) {
       case LINE_FRONT:
         temp_ang = Line_avoid_ang_front;
@@ -219,8 +217,6 @@ void loop() {
     }
 
   } else {
-
-    motorss.SetAllSpeeds(Speed);
 
     if (isBallFront()) {
       desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);

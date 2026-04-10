@@ -25,9 +25,9 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 const uint8_t Speed = 100; //Robot speedbase
 
 // Motor pins
-const int BACK_RIGHT_IN1 = 10;
-const int BACK_RIGHT_IN2 = 11;
-const int BACK_RIGHT_PWM = 12;
+const int BACK_RIGHT_IN1 = 34;
+const int BACK_RIGHT_IN2 = 33;
+const int BACK_RIGHT_PWM = 4;
 
 const int BACK_LEFT_IN1  = 31;
 const int BACK_LEFT_IN2  = 30;

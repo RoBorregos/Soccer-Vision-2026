@@ -26,12 +26,12 @@ const uint8_t Speed = 90; //Robot speedbase
 const uint8_t Speed_lateral_movement = 110; //Reduced speed for more precise movements, like aligning with the goal
 
 // Motor pins
-const int BACK_RIGHT_IN1 = 10;
-const int BACK_RIGHT_IN2 = 11;
-const int BACK_RIGHT_PWM = 12;
+const int BACK_RIGHT_IN1 = 34;
+const int BACK_RIGHT_IN2 = 33;
+const int BACK_RIGHT_PWM = 4;
 
-const int BACK_LEFT_IN1  = 31;
-const int BACK_LEFT_IN2  = 30;
+const int BACK_LEFT_IN1  = 30;
+const int BACK_LEFT_IN2  = 31;
 const int BACK_LEFT_PWM  = 3;
 
 const int FRONT_RIGHT_IN1 = 35;

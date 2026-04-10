@@ -13,7 +13,7 @@ Motors motorss(
 );
 
 
-const uint8_t Speed = 100 ; //Robot speedbase - reduced for testing
+
 void setup() {
   
   Serial.begin(115200);
@@ -21,7 +21,6 @@ void setup() {
   Serial2.begin(115200);
   motorss.InitializeMotors();
   Serial.println("Motors initialized");
-  motorss.SetAllSpeeds(Speed);
   
 }
 
@@ -52,6 +51,6 @@ void loop() {
   //motorss.MoveLeft();
   //delay(1000);
   //motorss.MoveMotors(0, Speed);
-  motorss.MoveOmnidirectionalBase( 0 , Speed, 0);
+  motorss.MoveOmnidirectionalBase(0, Speed, 0);
 
 }

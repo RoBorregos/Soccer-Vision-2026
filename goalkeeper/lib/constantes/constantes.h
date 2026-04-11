@@ -30,8 +30,8 @@ const int BACK_RIGHT_IN1 = 34;
 const int BACK_RIGHT_IN2 = 33;
 const int BACK_RIGHT_PWM = 4;
 
-const int BACK_LEFT_IN1  = 30;
-const int BACK_LEFT_IN2  = 31;
+const int BACK_LEFT_IN1  = 31;
+const int BACK_LEFT_IN2  = 30;
 const int BACK_LEFT_PWM  = 3;
 
 const int FRONT_RIGHT_IN1 = 35;

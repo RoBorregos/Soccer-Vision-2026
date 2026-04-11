@@ -222,61 +222,55 @@ void loop() {
 
     motorss.SetAllSpeeds(Speed);
 
-    if (isBallFront()) {
-      desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
-      motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
-      if (debug_ball_infront) {
-        Serial.println("==== Data infront ====");
-        Serial.println("Ball detected infront of robot");
-        Serial.print("Calculated temp_ang: ");
-        Serial.println(temp_ang);
-        Serial.print("Goal angle: ");
-        Serial.println(frontCam.goal_angle);
-        Serial.print("Ball angle: ");
-        Serial.println(frontCam.ball_angle);
-      }
-
-
-    } else if (frontCam.ball_seen) {
-      ; // When ball is seen but not in front, orient towards the ball
+    if (frontCam.ball_seen) {
       float ang = -frontCam.ball_angle;
-      
-      if (frontCam.ball_distance >  200){
-        if (frontCam.ball_distance > 50) { // Umbral de distancia ajustable
+
+      if (frontCam.ball_distance >= 200) {
+        bno.SetTarget(0.0f);
         if (ang > 7.0f) {
-          temp_ang = 90;  // Moverse a la derecha
+          temp_ang = 90;
           motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
         } else if (ang < -7.0f) {
-          temp_ang = -90; // Moverse a la izquierda
+          temp_ang = -90;
           motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
         } else {
-          // Si está centrada pero lejos, se queda quieto para no oscilar
           motorss.MoveOmnidirectionalBase(0, 0, speed_w);
         }
-        
-        if (debug_frontal_camera) Serial.println("Modo: Seguimiento Lateral (Lejos)");
-      } else {  
+        if (debug_frontal_camera) Serial.println("Modo: Tracking Lateral (Distancia > 200)");
+      } else {
+        if (isBallFront()) {
+          desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
+          motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
+          if (debug_ball_infront) {
+            Serial.println("==== Data infront ====");
+            Serial.println("Ball detected infront of robot");
+            Serial.print("Calculated temp_ang: ");
+            Serial.println(temp_ang);
+            Serial.print("Goal angle: ");
+            Serial.println(frontCam.goal_angle);
+            Serial.print("Ball angle: ");
+            Serial.println(frontCam.ball_angle);
+          }
+        } else {
           if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
           ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
           float x = constrain(ang / Ball_front_angle_clamp, -1.0, 1.0);
           float curved = powf(fabs(x), 3.0f) * (x >= 0 ? 1 : -1);
           temp_ang = curved * Ball_front_angle_clamp;
           motorss.MoveOmnidirectionalBase((int)ang, Speed, speed_w);
-      
-      
-          if (debug_frontal_camera){
-          Serial.println("=== Frontal Camera Data ====");
-          Serial.print("Ball angle : ");
-          Serial.println(ang);
-          Serial.print("Goal angle: ");
-          Serial.println(frontCam.goal_angle);
-          Serial.print("Ball distance: ");
-          Serial.println(frontCam.ball_distance);
+          if (debug_frontal_camera) {
+            Serial.println("=== Frontal Camera Data ====");
+            Serial.print("Ball angle : ");
+            Serial.println(ang);
+            Serial.print("Goal angle: ");
+            Serial.println(frontCam.goal_angle);
+            Serial.print("Ball distance: ");
+            Serial.println(frontCam.ball_distance);
           }
         }
       }
-    }
-    else if (mirrorCam.ball_seen) {
+
+    } else if (mirrorCam.ball_seen) {
       bno.SetTarget(0.0f);
 
       Robot_Mode_Mirror currentMode;
@@ -313,8 +307,6 @@ void loop() {
       }
     }
   }
-
-
 
   delay(20);
 }

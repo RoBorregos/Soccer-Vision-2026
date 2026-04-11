@@ -15,36 +15,6 @@ PhotoMux phototransistors(selectPins, muxPins);  // <- AGREGA ESTA LÍNEA
 Kicker kicker(KICKER_PIN, Kick_ball_distance_very_close, Kicker_pulse_ms, Kicker_cooldown_ms);
 
 PhotoMux::Sensor front[8] = {
-  {3, 0}, 
-  {3, 1}, 
-  {3, 2}, 
-  {3, 3}, 
-  {3, 4}, 
-  {3, 5}, 
-  {3, 6},
-  {3, 7}
-};
-
-PhotoMux::Sensor left[8] = {
-  {1, 0},
-  {1, 1},
-  {1, 2}, 
-  {1, 3}, 
-  {1, 4}, 
-  {1, 5},
-  {1, 6},
-  {1, 7}
-};
-
-PhotoMux::Sensor right[5] = {
-  {0, 0}, 
-  {0, 1}, 
-  {0, 3}, 
-  {0, 4}, 
-  {0, 5}, 
-};
-
-PhotoMux::Sensor back[8] = {
   {2, 0}, 
   {2, 1}, 
   {2, 2}, 
@@ -53,6 +23,39 @@ PhotoMux::Sensor back[8] = {
   {2, 5}, 
   {2, 6},
   {2, 7}
+};
+
+PhotoMux::Sensor left[8] = {
+  {3, 0},
+  {3, 1},
+  {3, 2}, 
+  {3, 3}, 
+  {3, 4}, 
+  {3, 5},
+  {3, 6},
+  {3, 7}
+};
+
+PhotoMux::Sensor right[8] = {
+  {0, 0}, 
+  {0, 1},
+  {0, 2},
+  {0, 3}, 
+  {0, 4}, 
+  {0, 5}, 
+  {0, 6},
+  {0, 7}
+};
+
+PhotoMux::Sensor back[8] = {
+  {1, 0}, 
+  {1, 1}, 
+  {1, 2}, 
+  {1, 3}, 
+  {1, 4}, 
+  {1, 5}, 
+  {1, 6},
+  {1, 7}
 };
 
 void initialize_robot() {
@@ -70,7 +73,7 @@ void initialize_robot() {
   phototransistors.configureSide(FRONT, front, 8);
   phototransistors.configureSide(BACK, back, 8);
   phototransistors.configureSide(LEFT, left, 8);
-  phototransistors.configureSide(RIGHT, right, 5);
+  phototransistors.configureSide(RIGHT, right, 8);
 
   phototransistors.setThreshold(FRONT, FRONT_THRESHOLD);
   phototransistors.setThreshold(LEFT,  LEFT_THRESHOLD);

@@ -240,27 +240,31 @@ void loop() {
     } else if (frontCam.ball_seen) {
       ; // When ball is seen but not in front, orient towards the ball
       float ang = -frontCam.ball_angle;
-      if (frontCam.ball_distance > 180) {
+      
+      if (frontCam.ball_distance >  200){
+        if (frontCam.ball_distance > 50) { // Umbral de distancia ajustable
         if (ang > 7.0f) {
-          temp_ang = 90;
+          temp_ang = 90;  // Moverse a la derecha
           motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
         } else if (ang < -7.0f) {
-          temp_ang = -90;
+          temp_ang = -90; // Moverse a la izquierda
           motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
         } else {
+          // Si está centrada pero lejos, se queda quieto para no oscilar
           motorss.MoveOmnidirectionalBase(0, 0, speed_w);
         }
-
+        
         if (debug_frontal_camera) Serial.println("Modo: Seguimiento Lateral (Lejos)");
-      } else {
-        if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
-        ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
-        float x = constrain(ang / Ball_front_angle_clamp, -1.0, 1.0);
-        float curved = powf(fabs(x), 3.0f) * (x >= 0 ? 1 : -1);
-        temp_ang = curved * Ball_front_angle_clamp;
-        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
-
-        if (debug_frontal_camera){
+      } else {  
+          if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
+          ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
+          float x = constrain(ang / Ball_front_angle_clamp, -1.0, 1.0);
+          float curved = powf(fabs(x), 3.0f) * (x >= 0 ? 1 : -1);
+          temp_ang = curved * Ball_front_angle_clamp;
+          motorss.MoveOmnidirectionalBase((int)ang, Speed, speed_w);
+      
+      
+          if (debug_frontal_camera){
           Serial.println("=== Frontal Camera Data ====");
           Serial.print("Ball angle : ");
           Serial.println(ang);
@@ -268,10 +272,11 @@ void loop() {
           Serial.println(frontCam.goal_angle);
           Serial.print("Ball distance: ");
           Serial.println(frontCam.ball_distance);
+          }
         }
       }
-
-    } else if (mirrorCam.ball_seen) {
+    }
+    else if (mirrorCam.ball_seen) {
       bno.SetTarget(0.0f);
 
       Robot_Mode_Mirror currentMode;

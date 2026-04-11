@@ -1,4 +1,4 @@
-#include "Kicker.h"
+#include "kicker.h"
 
 Kicker::Kicker(uint8_t pin, float distanceThreshold, unsigned long pulsems, unsigned long cooldownms)
     : _pin(pin), _distanceThreshold(distanceThreshold), _pulse_ms(pulsems), _cooldown_ms(cooldownms),

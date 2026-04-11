@@ -22,7 +22,7 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 
 
 //Robot speedbase
-const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed = 180; //Robot speedbase
 const uint8_t Speed_lateral_movement = 110; //Reduced speed for more precise movements, like aligning with the goal
 
 // Motor pins

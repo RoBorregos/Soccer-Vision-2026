@@ -276,7 +276,7 @@ void loop() {
         }
       }
     }
-    } else if (mirrorCam.ball_seen) {
+    else if (mirrorCam.ball_seen) {
       bno.SetTarget(0.0f);
 
       Robot_Mode_Mirror currentMode;

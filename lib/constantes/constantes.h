@@ -127,10 +127,10 @@ const uint8_t Line_avoid_speed = 135;
 const uint16_t BNO_setup_delay_ms = 300;
 
 //||||| Debuging variables ||||
-const bool debug_line_sensors = true;
-const bool debug_frontal_camera = true;
+const bool debug_line_sensors = false;
+const bool debug_frontal_camera = false;
 const bool debug_mirror_camera = false;
-const bool debug_bno = false;
+const bool debug_bno = true;
 const bool debug_photomux = false;
 const bool debug_movement = false;
 const bool debug_ball_infront = true;

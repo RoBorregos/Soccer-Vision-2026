@@ -28,8 +28,6 @@ void Motor::SetSpeed(float speed)
     }
 
     int pwm = constrain((int)abs(speed), 0, 255);
-    Serial.print("Setting motor speed: ");
-    Serial.println(pwm);
     // Cast only here, at the hardware boundary
     analogWrite(pwm_pin_, pwm);
 }

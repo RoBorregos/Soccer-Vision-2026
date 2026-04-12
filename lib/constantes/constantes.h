@@ -22,8 +22,8 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 
 
 //Robot speedbase
-const uint8_t Speed = 130; //Robot speedbase
-const uint8_t Speed_lateral_movement = 110; //Reduced speed for more precise movements, like aligning with the goal
+const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed_lateral_movement = 120; //Reduced speed for more precise movements, like aligning with the goal
 
 // Motor pins
 const int BACK_RIGHT_IN1 = 34;
@@ -58,7 +58,7 @@ const int servo_mid = 1300;
 const int servo_max = 1600;
 
 //Vision Tresholds
-const float Ball_distance_threshold   = 125.0f; // Distance threshold to consider the ball is in front of the robot
+const float Ball_distance_threshold   = 160.0f; // Distance threshold to consider the ball is in front of the robot
 const float Ball_infront_ang_threshold = 25.0f; // Angle threshold to consider the ball is in front of the robot
 const float Deadband_4_ballgoalangle  = 5.0f;  // Deadband for ball-goal angle when the ball is in front
 
@@ -67,10 +67,10 @@ const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD = 615000;
-const int LEFT_THRESHOLD  = 50000000;
-const int RIGHT_THRESHOLD = 6300;
-const int BACK_THRESHOLD  = 4800;
+const int FRONT_THRESHOLD = 5000;
+const int LEFT_THRESHOLD  = 600000000;
+const int RIGHT_THRESHOLD = 20000;
+const int BACK_THRESHOLD  = 64000;
 
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;
@@ -79,9 +79,10 @@ const unsigned long correctionTime = 300;
 //Variables for front
 const float Ball_front_angle_deadband = 6.0f;
 const float Ball_front_angle_clamp = 90.0f;
-const float Kick_ball_distance_very_close = 70.0f;
-
-
+const float Kick_ball_distance_very_close = 100.0f;
+const float Ball_area_threshold = 1000.0f; // Threshold for ball area to consider it in front, regardless of angle
+// Threshold for ball area to consider it in front, regardless of angle
+const float Ball_infront_outwards_treshold = 25.0f; // Threshold for ball angle when it's in front but moving outward
 //Kicker timing
 const unsigned long Kicker_pulse_ms = 70;
 const unsigned long Kicker_cooldown_ms = 5000;
@@ -129,11 +130,11 @@ const uint16_t BNO_setup_delay_ms = 300;
 //||||| Debuging variables ||||
 const bool debug_line_sensors = false;
 const bool debug_frontal_camera = false;
-const bool debug_mirror_camera = false;
-const bool debug_bno = true;
+const bool debug_mirror_camera = true;
+const bool debug_bno = false;
 const bool debug_photomux = false;
 const bool debug_movement = false;
-const bool debug_ball_infront = true;
+const bool debug_ball_infront = false;
 const bool debug_average_multiplex = false;
 
 //Variables for debugging ball front behavior

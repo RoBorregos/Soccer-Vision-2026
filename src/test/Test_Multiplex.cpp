@@ -10,7 +10,7 @@ void setup() {
   phototransistors.configureSide(FRONT, front, 8);
   phototransistors.configureSide(BACK,  back,  8);
   phototransistors.configureSide(LEFT,  left,  8);
-  phototransistors.configureSide(RIGHT, right, 5);
+  phototransistors.configureSide(RIGHT, right, 6);
 
   phototransistors.setThreshold(FRONT, FRONT_THRESHOLD);
   phototransistors.setThreshold(BACK,  BACK_THRESHOLD);

@@ -29,7 +29,7 @@ bool ready_2_shoot = false;
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
   bool frontDetected = phototransistors.isLineDetected(FRONT);
-  bool leftDetected  = phototransistors.isLineDetected(LEFT);
+  bool leftDetected  = false;//phototransistors.isLineDetected(LEFT);
   bool rightDetected = phototransistors.isLineDetected(RIGHT);
   bool backDetected  = phototransistors.isLineDetected(BACK);
 
@@ -75,6 +75,11 @@ void checkLineSensors() {
     Serial.print(backDetected);
     Serial.print(" | Detected Line Side: ");
     Serial.println(detectedLineSide);
+    Serial.println("========================================");
+    Serial.print("FRONT (MUX 0) avg: "); Serial.println(phototransistors.getAverage(FRONT));
+    Serial.print("LEFT  (MUX 1) avg: "); Serial.println(phototransistors.getAverage(LEFT));
+    Serial.print("BACK  (MUX 2) avg: "); Serial.println(phototransistors.getAverage(BACK));
+    Serial.print("RIGHT (MUX 3) avg: "); Serial.println(phototransistors.getAverage(RIGHT));
   }
 }
 
@@ -92,7 +97,7 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
   Robot_Mode_Infront currentMode; 
   if (goal_ang > 0) { // Goal is on the right
     if (ball_ang < -Ball_front_min_lateral_angle) {
-      if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
+      if (fabsf(fabsf(goal_ang) - fabsf(ball_ang)) > Deadband_4_ballgoalangle) {
         currentMode = Aligning_with_goal_right;
         temp_ang = ball_ang - Ball_orbit_offset; // Move left to align the ball
         ready_2_shoot = false;
@@ -191,7 +196,7 @@ void loop() {
 
       case LINE_ALL_SIDES:
       case LINE_BOTH_SIDES:
-        motorss.MoveBackward();
+        motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
 
       case LINE_FRONT_LEFT:
@@ -220,7 +225,7 @@ void loop() {
         break;
 
       default:
-        motorss.MoveBackward();
+        motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
     }
 

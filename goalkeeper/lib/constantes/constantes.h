@@ -22,8 +22,8 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 
 
 //Robot speedbase
-const uint8_t Speed = 110; //Robot speedbase
-const uint8_t Speed_lateral_movement = 110; //Reduced speed for more precise movements, like aligning with the goal
+const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed_lateral_movement = 180; //Reduced speed for more precise movements, like aligning with the goal
 
 // Motor pins
 const int BACK_RIGHT_IN1 = 34;
@@ -67,10 +67,10 @@ const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD = 1000000000;
-const int LEFT_THRESHOLD  = 1000000000;
-const int RIGHT_THRESHOLD = 1000000000;
-const int BACK_THRESHOLD  = 1000000000;
+const int FRONT_THRESHOLD = 70000;
+const int LEFT_THRESHOLD  = 300000;
+const int RIGHT_THRESHOLD = 45000;
+const int BACK_THRESHOLD  = 110000;
 
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;
@@ -133,7 +133,7 @@ const bool debug_mirror_camera = false;
 const bool debug_bno = false;
 const bool debug_photomux = false;
 const bool debug_movement = false;
-const bool debug_ball_infront = true;
+const bool debug_ball_infront = false;
 const bool debug_average_multiplex = false;
 
 //Variables for debugging ball front behavior

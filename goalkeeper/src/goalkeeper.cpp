@@ -19,11 +19,8 @@ LineSide detectedLineSide    = LINE_NONE; //Variable to store which line is dete
 //Variable for angle control in different game situations
 float temp_ang = 0;
 
-//Variables for communication with cameras
-String serial1_line;
-String serial2_line;
-
 bool ready_2_shoot = false;
+unsigned long lastHeartbeatMs = 0;
 
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
@@ -87,7 +84,7 @@ bool isBallFront() {
 
 //Function to determine the desired angle based on the goal angle and ball angle, with different logic depending on whether the goal is on the right or left. It also includes an orbiting behavior around the ball when it's in front of the robot but not aligned with the goal.
 void desired_ang_goal(float goal_ang, float ball_ang) {
-  Robot_Mode_Infront currentMode; 
+  Robot_Mode_Infront currentMode = Moving_towards_goal;
   if (goal_ang > 0) { // Goal is on the right
     if (ball_ang < -Ball_front_min_lateral_angle) {
       if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
@@ -140,6 +137,11 @@ void setup() {
 
 void loop() {
 
+  if (millis() - lastHeartbeatMs >= 1000) {
+    Serial.println("[RUN] loop activo");
+    lastHeartbeatMs = millis();
+  }
+
   // Read serial lines from both cameras
   frontCam.read();
   mirrorCam.read();
@@ -175,8 +177,6 @@ void loop() {
   checkLineSensors();
 
   if (isAvoidingLine) {
-    motorss.SetAllSpeeds(Line_avoid_speed);
-
     switch (detectedLineSide) {
       case LINE_FRONT:
         temp_ang = Line_avoid_ang_front;
@@ -185,7 +185,7 @@ void loop() {
 
       case LINE_ALL_SIDES:
       case LINE_BOTH_SIDES:
-        motorss.MoveBackward();
+        motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
 
       case LINE_FRONT_LEFT:
@@ -214,7 +214,7 @@ void loop() {
         break;
 
       default:
-        motorss.MoveBackward();
+        motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
     }
 
@@ -225,14 +225,14 @@ void loop() {
     if (frontCam.ball_seen) {
       float ang = -frontCam.ball_angle;
 
-      if (frontCam.ball_distance >= 200) {
+      if (frontCam.ball_distance >= 190) {
         bno.SetTarget(0.0f);
         if (ang > 7.0f) {
           temp_ang = 90;
-          motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
+          motorss.MoveOmnidirectionalBase((int)temp_ang, Speed_lateral_movement, speed_w);
         } else if (ang < -7.0f) {
           temp_ang = -90;
-          motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
+          motorss.MoveOmnidirectionalBase((int)temp_ang, Speed_lateral_movement, speed_w);
         } else {
           motorss.MoveOmnidirectionalBase(0, 0, speed_w);
         }

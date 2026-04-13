@@ -6,7 +6,7 @@ camera::camera(HardwareSerial& serial, bool isMirror, bool enemy_yellow)
     goal_distance(0), goal_angle(0),
     own_distance(0),  own_angle(0),
     ball_seen(false), goal_seen(false), own_seen(false),
-    _buffer("")
+    _buffer{0}, _bufferIndex(0)
 {
 }
 
@@ -15,18 +15,22 @@ void camera::read() {
     char c = (char)_serial.read();
     if (c == '\r') continue;
     if (c == '\n') {
+      _buffer[_bufferIndex] = '\0';
       process(_buffer);
-      _buffer = "";
+      _bufferIndex = 0;
     } else {
-      _buffer += c;
-      if (_buffer.length() > 120) _buffer = "";
+      if (_bufferIndex < (BUFFER_SIZE - 1)) {
+        _buffer[_bufferIndex++] = c;
+      } else {
+        _bufferIndex = 0;
+      }
     }
   }
 }
 
-void camera::process(const String& line) {
+void camera::process(const char* line) {
   float dist, ang, g_dist, g_ang, o_dist, o_ang;
-  int parsed = sscanf(line.c_str(), "%f %f %f %f %f %f",
+  int parsed = sscanf(line, "%f %f %f %f %f %f",
                       &dist, &ang, &g_dist, &g_ang, &o_dist, &o_ang);
   if (parsed == 6) {
     ball_distance = dist;   ball_angle = ang;

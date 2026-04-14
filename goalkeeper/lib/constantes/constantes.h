@@ -5,10 +5,10 @@
 //|||PID Constants|||
 
 //PID values
-const float p = 1.7;
-const float i = 0.017;
-const float d = 0.17;
-const float pid_max_output = 90.0f;
+const float p = 5.0f;
+const float i = 0.05f;
+const float d = 0.5f;
+const float pid_max_output = 110.0f;
 const double DeadEnd = 2.0;
 const double I_DEADBAND = 1.5;
 
@@ -127,7 +127,7 @@ const uint8_t Line_avoid_speed = 135;
 const uint16_t BNO_setup_delay_ms = 300;
 
 //||||| Debuging variables ||||
-const bool debug_line_sensors = true;
+const bool debug_line_sensors = false;
 const bool debug_frontal_camera = false;
 const bool debug_mirror_camera = false;
 const bool debug_bno = true;

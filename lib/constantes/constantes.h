@@ -131,8 +131,8 @@ const uint16_t BNO_setup_delay_ms = 300;
 //||||| Debuging variables ||||
 const bool debug_line_sensors = false;
 const bool debug_frontal_camera = true;
-const bool debug_mirror_camera = true;
-const bool debug_bno = false;
+const bool debug_mirror_camera = false;
+const bool debug_bno = true;
 const bool debug_photomux = false;
 const bool debug_movement = false;
 const bool debug_ball_infront = true;
@@ -154,5 +154,5 @@ enum Robot_Mode_Mirror {
 };
 
 //boolean for blue and yellow goal exchange
-const bool yellow_enemy_goal = true;
+const bool yellow_enemy_goal = false;
 #endif

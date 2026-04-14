@@ -9,7 +9,7 @@
 
 #include "constantes.h"
 
-extern BNO055 bno;
+extern BNO085 bno;
 extern PID pid;
 extern Motors motorss;
 extern PhotoMux phototransistors;

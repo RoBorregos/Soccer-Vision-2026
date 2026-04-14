@@ -1,5 +1,5 @@
 #include "RobotInstances.h"
-BNO055 bno;
+BNO085 bno;
 PID pid(p, i, d, pid_max_output);
 Motors motorss(
   FRONT_LEFT_PWM, FRONT_LEFT_IN1, FRONT_LEFT_IN2,

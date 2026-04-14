@@ -1,12 +1,10 @@
 #ifndef Bno_h
 #define Bno_h
-#include "Adafruit_BNO055.h"
-#include "utility/imumaths.h"
 #include "Arduino.h"
 #include "Wire.h"
-#include "Adafruit_Sensor.h"
+#include <Adafruit_BNO08x.h>
 
-class BNO055
+class BNO085
 {
 private:
     double yaw_;
@@ -16,10 +14,13 @@ private:
     double target_angle_;
     double difference_angle_;
     double setpoint;
-    Adafruit_BNO055 bno_{55, 0x28, &Wire};
+    double yaw_offset_;
+    Adafruit_BNO08x bno_{-1};
+    sh2_SensorValue_t sensor_value_;
+    bool SetReports();
 
 public:
-    BNO055();
+    BNO085();
     void InitializeBNO();
     double NormalizeAngle(double angle);
     void GetBNOData();
@@ -27,11 +28,11 @@ public:
     double GetRoll();
     double GetPitch();
     void SetYaw(double yaw);
-    
+
     // Funciones de setpoint y error
     void SetTarget(double target);
     double GetError();
-    
+
     // NUEVAS FUNCIONES PARA TELEMETRÍA
     double GetTarget();
     double GetRawYaw();

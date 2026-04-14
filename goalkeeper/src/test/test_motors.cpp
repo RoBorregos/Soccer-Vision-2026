@@ -14,10 +14,6 @@ Motors motorss(
 
 
 
-<<<<<<<< HEAD:goalkeeper/src/test_motors.cpp
-
-========
->>>>>>>> 277e46f7614aaeaed663df8a479c556cabdecd34:goalkeeper/src/test/test_motors.cpp
 void setup() {
   
   Serial.begin(115200);
@@ -44,11 +40,7 @@ void loop() {
   //delay(1000);
   //motorss.StopMotors();
   //motorss.MoveForward();
-<<<<<<<< HEAD:goalkeeper/src/test_motors.cpp
-  delay(1000);
-========
   //delay(1000);
->>>>>>>> 277e46f7614aaeaed663df8a479c556cabdecd34:goalkeeper/src/test/test_motors.cpp
   //motorss.StopMotors();
   //motorss.MoveBackward();
   //delay(1000);

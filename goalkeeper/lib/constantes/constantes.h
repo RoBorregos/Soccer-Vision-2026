@@ -5,10 +5,10 @@
 //|||PID Constants|||
 
 //PID values
-const float p = 5.0f;
-const float i = 0.05f;
-const float d = 0.5f;
-const float pid_max_output = 110.0f;
+const float p = 1.7f;
+const float i = 0.017f;
+const float d = 0.17f;
+const float pid_max_output = 90.0f;
 const double DeadEnd = 2.0;
 const double I_DEADBAND = 1.5;
 

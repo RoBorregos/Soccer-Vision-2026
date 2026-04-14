@@ -93,7 +93,7 @@ bool isBallFront() {
 
 //Function to determine the desired angle based on the goal angle and ball angle, with different logic depending on whether the goal is on the right or left. It also includes an orbiting behavior around the ball when it's in front of the robot but not aligned with the goal.
 void desired_ang_goal(float goal_ang, float ball_ang) {
-  ball_ang = -ball_ang;
+  //ball_ang = -ball_ang;
   Robot_Mode_Infront currentMode; 
   if (goal_ang > 0) { // Goal is on the right
     if (ball_ang < -Ball_front_min_lateral_angle) {
@@ -187,7 +187,7 @@ void loop() {
   // Check line sensors — maximum priority
   checkLineSensors();
 
-  if (false) {
+  if (isAvoidingLine) {
     switch (detectedLineSide) {
       case LINE_FRONT:
         temp_ang = Line_avoid_ang_front;
@@ -232,8 +232,8 @@ void loop() {
   } else {
 
     if (isBallFront()) {
-      desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
-      if (fabsf(temp_ang) > 45) {
+      desired_ang_goal(frontCam.goal_angle, -frontCam.ball_angle);
+      if (fabsf(temp_ang) > 40) {
         motorss.MoveOmnidirectionalBase((int)temp_ang, Speed + 30, speed_w);
       }
       motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
@@ -245,7 +245,7 @@ void loop() {
         Serial.print("Goal angle: ");
         Serial.println(frontCam.goal_angle);
         Serial.print("Ball angle: ");
-        Serial.println(frontCam.ball_angle);
+        Serial.println(-frontCam.ball_angle);
         Serial.print("Ball distance");
         Serial.println(frontCam.ball_distance);
         Serial.print("Ball area");
@@ -255,6 +255,7 @@ void loop() {
 
 
     } else if (frontCam.ball_seen) {
+      bno
       ; // When ball is seen but not in front, orient towards the ball
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;

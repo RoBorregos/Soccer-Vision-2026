@@ -13,9 +13,11 @@ class camera {
     
     private:
     HardwareSerial& _serial;
-    String _buffer;
+    static constexpr size_t BUFFER_SIZE = 128;
+    char _buffer[BUFFER_SIZE];
+    size_t _bufferIndex;
     bool _isMirror;
     bool _enemy_yellow;
 
-    void process(const String& line);
+    void process(const char* line);
 };

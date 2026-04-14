@@ -26,22 +26,23 @@ PhotoMux::Sensor front[8] = {
 };
 
 PhotoMux::Sensor left[8] = {
-  {1, 0},
-  {1, 1},
-  {1, 2}, 
-  {1, 3}, 
-  {1, 4}, 
-  {1, 5},
-  {1, 6},
-  {1, 7}
-};
-
-PhotoMux::Sensor right[5] = {
-  {3, 0}, 
-  {3, 1}, 
+  {3, 0},
+  {3, 1},
+  {3, 2}, 
   {3, 3}, 
   {3, 4}, 
-  {3, 5}, 
+  {3, 5},
+  {3, 6},
+  {3, 7}
+};
+
+PhotoMux::Sensor right[6] = {
+  {1, 0}, 
+  {1, 1},
+  {1, 3}, 
+  {1, 4}, 
+  {1, 5}, 
+  {1, 7}
 };
 
 PhotoMux::Sensor back[8] = {
@@ -57,23 +58,32 @@ PhotoMux::Sensor back[8] = {
 
 void initialize_robot() {
   Serial.begin(115200);
+  Serial.println("[INIT] Serial listo");
   Serial1.begin(115200);
   Serial2.begin(115200);
+  Serial.println("[INIT] Camaras serial listas");
   bno.InitializeBNO();
   bno.GetBNOData();
+  Serial.println("[INIT] BNO listo");
   motorss.InitializeMotors();
+  Serial.println("[INIT] Motores listos");
   pinMode(KICKER_PIN, OUTPUT);
   digitalWrite(KICKER_PIN, LOW);
+  Serial.println("[INIT] Kicker listo");
   //Photosensors
   phototransistors.begin(); 
   analogReadResolution(12);
+  Serial.println("[INIT] PhotoMux begin listo");
   phototransistors.configureSide(FRONT, front, 8);
   phototransistors.configureSide(BACK, back, 8);
   phototransistors.configureSide(LEFT, left, 8);
   phototransistors.configureSide(RIGHT, right, 5);
+  Serial.println("[INIT] Lados PhotoMux configurados");
 
   phototransistors.setThreshold(FRONT, FRONT_THRESHOLD);
   phototransistors.setThreshold(LEFT,  LEFT_THRESHOLD);
   phototransistors.setThreshold(RIGHT, RIGHT_THRESHOLD);
   phototransistors.setThreshold(BACK,  BACK_THRESHOLD);
+  Serial.println("[INIT] Thresholds PhotoMux listos");
+  Serial.println("[INIT] Robot inicializado completo");
 }

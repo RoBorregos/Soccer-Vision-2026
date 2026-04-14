@@ -67,10 +67,10 @@ const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD = 700000000;
+const int FRONT_THRESHOLD = 124000000;
 const int LEFT_THRESHOLD  = 300000000;
 const int RIGHT_THRESHOLD = 450000000;
-const int BACK_THRESHOLD  = 1100000000;
+const int BACK_THRESHOLD  = 700000000;
 
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;
@@ -119,7 +119,7 @@ const float Line_avoid_ang_right      = -90.0f;  // Strafe left
 const float Line_avoid_ang_back       =   0.0f;  // Move forward to escape rear line
 
 // Line avoidance speed override
-const uint8_t Line_avoid_speed = 135;
+const uint8_t Line_avoid_speed = 185;
 
 
 
@@ -128,12 +128,12 @@ const uint16_t BNO_setup_delay_ms = 300;
 
 //||||| Debuging variables ||||
 const bool debug_line_sensors = false;
-const bool debug_frontal_camera = false;
+const bool debug_frontal_camera = true;
 const bool debug_mirror_camera = false;
 const bool debug_bno = true;
 const bool debug_photomux = false;
 const bool debug_movement = false;
-const bool debug_ball_infront = false;
+const bool debug_ball_infront = true;
 const bool debug_average_multiplex = false;
 
 //Variables for debugging ball front behavior

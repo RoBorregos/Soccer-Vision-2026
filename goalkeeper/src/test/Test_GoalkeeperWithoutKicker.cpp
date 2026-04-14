@@ -265,7 +265,7 @@ void loop() {
       if (frontCam.ball_seen) {
         float ang = -frontCam.ball_angle;
 
-        if (frontCam.ball_distance >= 190) {
+        if (frontCam.ball_distance >= 160) {
           bno.SetTarget(0.0f);
           if (ang > 7.0f) {
             temp_ang = 90;

@@ -12,45 +12,25 @@ Motors motorss(
   BACK_LEFT_PWM, BACK_LEFT_IN1, BACK_LEFT_IN2
 );
 
+BNO085 bno;
+PID pid(p, i, d, pid_max_output);
 
 void setup() {
-  
   Serial.begin(115200);
   Serial1.begin(115200);
   Serial2.begin(115200);
   motorss.InitializeMotors();
+  bno.InitializeBNO();
   Serial.println("Motors initialized");
-  
 }
 
-// Buffers serial
 void loop() {
   Serial.println("Testing Motors...");
-  //motorss.MoveMotor1();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveMotor2();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveMotor3();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveMotor4();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveForward();
-  //delay(1000);
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveBackward();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveRight();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveLeft();
-  //delay(1000);
-  //motorss.MoveMotors(0, Speed);
-  motorss.MoveOmnidirectionalBase(0, Speed, 0);
 
+  bno.GetBNOData();
+  double error   = bno.GetError();
+  double speed_w = pid.Calculate(error);
+  speed_w = constrain(speed_w, PID_output_min, PID_output_max);
+
+  motorss.MoveOmnidirectionalBase(90, Speed, speed_w);
 }

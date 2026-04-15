@@ -273,7 +273,7 @@ void loop() {
           } else if (ang < -7.0f) {
             temp_ang = -90;
             motorss.MoveOmnidirectionalBase((int)temp_ang, Speed_lateral_movement, speed_w);
-          } else {
+         } else {
             motorss.MoveOmnidirectionalBase(0, 0, speed_w);
           }
           if (debug_frontal_camera) Serial.println("Modo: Tracking Lateral (Distancia > 190)");
@@ -296,9 +296,6 @@ void loop() {
           } else {
             if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
             ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
-            float x = constrain(ang / Ball_front_angle_clamp, -1.0, 1.0);
-            float curved = powf(fabs(x), 3.0f) * (x >= 0 ? 1 : -1);
-            temp_ang = curved * Ball_front_angle_clamp;
             motorss.MoveOmnidirectionalBase((int)ang, Speed, speed_w);
 
             if (debug_frontal_camera) {

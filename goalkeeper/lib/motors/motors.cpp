@@ -96,8 +96,8 @@ void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_ou
     // degree = degree + 90; // Ajuste para que 0° sea hacia adelante
 
     float Speed_Front_Left = (cos((322.5 + degree) * PI / 180) * speed) + pid_output;
-    float Speed_Front_Right = (cos((37.5 + degree) * PI / 180) * speed) - pid_output;
-    float Speed_Back_Right = (cos((142.5 + degree) * PI / 180) * speed) + pid_output;
+    float Speed_Front_Right = ((cos((37.5 + degree) * PI / 180) * speed) - pid_output) * 1.25;
+    float Speed_Back_Right = ((cos((142.5 + degree) * PI / 180) * speed) + pid_output )* 1.25;
     float Speed_Back_Left = (cos((217.5 + degree) * PI / 180) * speed) - pid_output;
 
 

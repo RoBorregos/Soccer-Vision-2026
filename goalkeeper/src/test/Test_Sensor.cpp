@@ -29,10 +29,10 @@ void setup() {
   sensors.configureSide(LEFT,  left,  8);
   sensors.configureSide(RIGHT, right, 8);
 
-  sensors.setThreshold(FRONT, FRONT_THRESHOLD);
-  sensors.setThreshold(BACK,  BACK_THRESHOLD);
-  sensors.setThreshold(LEFT,  LEFT_THRESHOLD);
-  sensors.setThreshold(RIGHT, RIGHT_THRESHOLD);
+  sensors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);
+  sensors.setThresholdRange(BACK,  BACK_THRESHOLD_MIN, BACK_THRESHOLD_MAX);
+  sensors.setThresholdRange(LEFT,  LEFT_THRESHOLD_MIN, LEFT_THRESHOLD_MAX);
+  sensors.setThresholdRange(RIGHT, RIGHT_THRESHOLD_MIN, RIGHT_THRESHOLD_MAX);
 
   Serial.println("PhotoMux individual sensor test ready.");
 }

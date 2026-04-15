@@ -76,10 +76,10 @@ void initialize_robot() {
   phototransistors.configureSide(RIGHT, right, 5);
   Serial.println("[INIT] Lados PhotoMux configurados");
 
-  phototransistors.setThreshold(FRONT, FRONT_THRESHOLD);
-  phototransistors.setThreshold(LEFT,  LEFT_THRESHOLD);
-  phototransistors.setThreshold(RIGHT, RIGHT_THRESHOLD);
-  phototransistors.setThreshold(BACK,  BACK_THRESHOLD);
+  phototransistors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(LEFT,  LEFT_THRESHOLD_MIN, LEFT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(RIGHT, RIGHT_THRESHOLD_MIN, RIGHT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(BACK,  BACK_THRESHOLD_MIN, BACK_THRESHOLD_MAX);
   Serial.println("[INIT] Thresholds PhotoMux listos");
   Serial.println("[INIT] Robot inicializado completo");
 }

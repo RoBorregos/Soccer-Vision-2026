@@ -67,10 +67,14 @@ const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD = 124000000;
-const int LEFT_THRESHOLD  = 300000000;
-const int RIGHT_THRESHOLD = 450000000;
-const int BACK_THRESHOLD  = 700000000;
+const int FRONT_THRESHOLD_MIN = 124000000;
+const int FRONT_THRESHOLD_MAX = 500000000;
+const int LEFT_THRESHOLD_MIN  = 300000000;
+const int LEFT_THRESHOLD_MAX = 400000000;
+const int RIGHT_THRESHOLD_MIN = 450000000;
+const int RIGHT_THRESHOLD_MAX = 700000000;
+const int BACK_THRESHOLD_MIN  = 700000000;
+const int BACK_THRESHOLD_MAX  = 1000000000;
 
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;

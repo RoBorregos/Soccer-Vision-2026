@@ -3,6 +3,7 @@
 #define PhotoMux_h
 
 #include <Arduino.h>
+#include <limits.h>
 
 // - Sides around the robot
 enum Side { FRONT, LEFT, RIGHT, BACK };
@@ -24,8 +25,8 @@ public:
 
     // - configure sensors for a side
     void configureSide(Side side, const Sensor* sensors, uint8_t count);
-    // - set detection threshold
-    void setThreshold(Side side, int threshold);
+    // - set detection thresholds range
+    void setThresholdRange(Side side, int minThreshold, int maxThreshold);
 
     // - detection helpers
     bool isLineDetected(Side side); // - compare avg to threshold
@@ -37,7 +38,8 @@ private:
     uint8_t _selectPins[3];     // - mux select pins
     uint8_t _muxPins[4];        // - analog input pins
 
-    int thresholds[4];          // - per-side thresholds
+    int minThresholds[4];       // - per-side minimum thresholds
+    int maxThresholds[4];       // - per-side maximum thresholds
 
     // - sensor arrays per side
     Sensor* frontSensors;

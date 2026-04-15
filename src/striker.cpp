@@ -191,7 +191,7 @@ void loop() {
   // Check line sensors — maximum priority
   checkLineSensors();
 
-  if (false) {
+  if (isAvoidingLine) {
     switch (detectedLineSide) {
       case LINE_FRONT:
         temp_ang = Line_avoid_ang_front;

@@ -26,17 +26,16 @@ PhotoMux::Sensor front[8] = {
 };
 
 PhotoMux::Sensor left[8] = {
-  {1, 0},
-  {1, 1},
-  {1, 2}, 
-  {1, 3}, 
-  {1, 4}, 
-  {1, 5},
-  {1, 6},
-  {1, 7}
+  {2, 1},
+  {2, 2},
+  {2, 3},
+  {2, 4}, 
+  {2, 5},
+  {2, 6},
+  {2, 7}
 };
 
-PhotoMux::Sensor right[6] = {
+PhotoMux::Sensor right[7] = {
   {1, 0}, 
   {1, 1},
   {1, 3}, 
@@ -46,14 +45,14 @@ PhotoMux::Sensor right[6] = {
 };
 
 PhotoMux::Sensor back[8] = {
-  {2, 0}, 
-  {2, 1}, 
-  {2, 2}, 
-  {2, 3}, 
-  {2, 4}, 
-  {2, 5}, 
-  {2, 6},
-  {2, 7}
+  {3, 0}, 
+  {3, 1}, 
+  {3, 2}, 
+  {3, 3}, 
+  {3, 4}, 
+  {3, 5}, 
+  {3, 6},
+  {3, 7}
 };
 
 void initialize_robot() {
@@ -73,8 +72,8 @@ void initialize_robot() {
   phototransistors.configureSide(LEFT, left, 8);
   phototransistors.configureSide(RIGHT, right, 6);
 
-  phototransistors.setThreshold(FRONT, FRONT_THRESHOLD);
-  phototransistors.setThreshold(LEFT,  LEFT_THRESHOLD);
-  phototransistors.setThreshold(RIGHT, RIGHT_THRESHOLD);
-  phototransistors.setThreshold(BACK,  BACK_THRESHOLD);
+  phototransistors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(LEFT,  LEFT_THRESHOLD_MIN, LEFT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(RIGHT, RIGHT_THRESHOLD_MIN, RIGHT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(BACK,  BACK_THRESHOLD_MIN, BACK_THRESHOLD_MAX);
 }

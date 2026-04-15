@@ -12,10 +12,10 @@ void setup() {
   phototransistors.configureSide(LEFT,  left,  8);
   phototransistors.configureSide(RIGHT, right, 6);
 
-  phototransistors.setThreshold(FRONT, FRONT_THRESHOLD);
-  phototransistors.setThreshold(BACK,  BACK_THRESHOLD);
-  phototransistors.setThreshold(LEFT,  LEFT_THRESHOLD);
-  phototransistors.setThreshold(RIGHT, RIGHT_THRESHOLD);
+  phototransistors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(BACK,  BACK_THRESHOLD_MIN, BACK_THRESHOLD_MAX);//400000
+  phototransistors.setThresholdRange(LEFT,  LEFT_THRESHOLD_MIN, LEFT_THRESHOLD_MAX);//20000
+  phototransistors.setThresholdRange(RIGHT, RIGHT_THRESHOLD_MIN, RIGHT_THRESHOLD_MAX);
 }
 
 void loop() {

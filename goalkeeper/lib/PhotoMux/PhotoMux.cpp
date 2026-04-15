@@ -50,7 +50,7 @@ void PhotoMux::selectChannel(uint8_t channel) {
     digitalWrite(_selectPins[0], channel & 0x01);
     digitalWrite(_selectPins[1], (channel >> 1) & 0x01);
     digitalWrite(_selectPins[2], (channel >> 2) & 0x01);
-    delayMicroseconds(5); 
+    delayMicroseconds(5);
 }
 
 // - Read one analog sensor via mux

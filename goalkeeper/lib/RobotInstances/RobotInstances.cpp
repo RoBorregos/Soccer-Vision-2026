@@ -15,11 +15,13 @@ PhotoMux phototransistors(selectPins, muxPins);  // <- AGREGA ESTA LÍNEA
 Kicker kicker(KICKER_PIN, Kick_ball_distance_very_close, Kicker_pulse_ms, Kicker_cooldown_ms);
 
 PhotoMux::Sensor front[4] = {
-  {2, 0}, 
-  {2, 2}, 
+  {2, 0},
+  {2, 2},
   {2, 4}, 
-  {2, 6}
+  {2, 6},
 };
+
+
 
 PhotoMux::Sensor left[8] = {
   {3, 0},
@@ -32,12 +34,14 @@ PhotoMux::Sensor left[8] = {
   {3, 7}
 };
 
-PhotoMux::Sensor right[6] = {
+PhotoMux::Sensor right[8] = {
   {0, 0}, 
   {0, 1},
+  {0, 2},
   {0, 3}, 
   {0, 4}, 
-  {0, 5}, 
+  {0, 5},
+  {0, 6}, 
   {0, 7}
 };
 
@@ -70,10 +74,10 @@ void initialize_robot() {
   phototransistors.begin(); 
   analogReadResolution(12);
   Serial.println("[INIT] PhotoMux begin listo");
-  phototransistors.configureSide(FRONT, front, 8);
+  phototransistors.configureSide(FRONT, front, 7);
   phototransistors.configureSide(BACK, back, 8);
   phototransistors.configureSide(LEFT, left, 8);
-  phototransistors.configureSide(RIGHT, right, 5);
+  phototransistors.configureSide(RIGHT, right, 8);
   Serial.println("[INIT] Lados PhotoMux configurados");
 
   phototransistors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);

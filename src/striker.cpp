@@ -149,6 +149,7 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
       currentMode = Moving_towards_goal;
     }
   }
+}
 
 void setup() {
   initialize_robot();

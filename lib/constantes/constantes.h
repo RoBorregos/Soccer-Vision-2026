@@ -22,8 +22,8 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 
 
 //Robot speedbase
-const uint8_t Speed = 130; //Robot speedbase
-const uint8_t Speed_lateral_movement = 140; //Reduced speed for more precise movements, like aligning with the goal
+const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed_lateral_movement = 130; //Reduced speed for more precise movements, like aligning with the goal
 
 // Motor pins
 const int BACK_RIGHT_IN1 = 34;
@@ -60,23 +60,23 @@ const int servo_max = 1600;
 //Vision Tresholds
 const float Ball_distance_threshold   = 160.0f; // Distance threshold to consider the ball is in front of the robot
 const float Ball_infront_ang_threshold = 25.0f; // Angle threshold to consider the ball is in front of the robot
-const float Deadband_4_ballgoalangle  = 5.0f;  // Deadband for ball-goal angle when the ball is in front
+const float Deadband_4_ballgoalangle  = 10.0f;  // Deadband for ball-goal angle when the ball is in front
 
 // PhotoMux pins
 const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD_MIN = 6500;
+const int FRONT_THRESHOLD_MIN = 8000;
 const int FRONT_THRESHOLD_MAX = 50000;
 
-const int LEFT_THRESHOLD_MIN  = 45000;
+const int LEFT_THRESHOLD_MIN  = 48000;
 const int LEFT_THRESHOLD_MAX = 120000;
 
-const int RIGHT_THRESHOLD_MIN = 15000;
+const int RIGHT_THRESHOLD_MIN = 18000;
 const int RIGHT_THRESHOLD_MAX = 50000;
 
-const int BACK_THRESHOLD_MIN  = 3000;
+const int BACK_THRESHOLD_MIN  = 4000;
 const int BACK_THRESHOLD_MAX  = 50000;
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;
@@ -86,7 +86,7 @@ const unsigned long correctionTime = 300;
 const float Ball_front_angle_deadband = 6.0f;
 const float Ball_front_angle_clamp = 90.0f;
 const float Kick_ball_distance_very_close = 70;
-const float Ball_area_threshold = 1100.0f; // Threshold for ball area to consider it in front, regardless of angle
+const float Ball_area_threshold = 700.0f; // Threshold for ball area to consider it in front, regardless of angle
 // Threshold for ball area to consider it in front, regardless of angle
 const float Ball_infront_outwards_treshold = 25.0f; // Threshold for ball angle when it's in front but moving outward
 //Kicker timing
@@ -94,8 +94,8 @@ const unsigned long Kicker_pulse_ms = 70;
 const unsigned long Kicker_cooldown_ms = 5000;
 
 //Variables for aligning robot towards goal when ball is infront
-const float Goal_heading_offset_right =  5.0f; // Added when goal is on the right
-const float Goal_heading_offset_left  = -5.0f; // Added when goal is on the left
+const float Goal_heading_offset_right =  10.0f; // Added when goal is on the right
+const float Goal_heading_offset_left  = -10.0f; // Added when goal is on the left
 
 //Variables for alining ball with goal
 const float Ball_orbit_offset = 70.0f;
@@ -135,7 +135,7 @@ const uint8_t Line_avoid_speed = 135;
 const uint16_t BNO_setup_delay_ms = 300;
 
 //||||| Debuging variables ||||
-const bool debug_line_sensors = false;
+const bool debug_line_sensors = true;
 const bool debug_frontal_camera = true;
 const bool debug_mirror_camera = false;
 const bool debug_bno = false;
@@ -160,5 +160,5 @@ enum Robot_Mode_Mirror {
 };
 
 //boolean for blue and yellow goal exchange
-const bool yellow_enemy_goal = false;
+const bool yellow_enemy_goal = true;
 #endif

@@ -110,7 +110,7 @@ void checkLineSensors() {
 bool isBallFront() {
   return  ((frontCam.ball_seen
       && frontCam.ball_distance < Ball_distance_threshold
-      && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold)||((frontCam.ball_seen && frontCam.ball_area > Ball_area_threshold ) && (fabsf(frontCam.ball_angle) > Ball_infront_outwards_treshold)));
+      && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold)||((frontCam.ball_seen && frontCam.ball_area > Ball_area_threshold ) && true));//(fabsf(frontCam.ball_angle) > Ball_infront_outwards_treshold)));
 }
 
 
@@ -153,7 +153,17 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
     }
   }
 
+  if (debug_ball_infront) {
+
+  Serial.print(("==== Mode: ===="));
+  switch (currentMode) {
+    case Aligning_with_goal_right: Serial.println(("Aligning with goal right")); break;
+    case Aligning_with_goal_left:  Serial.println(("Aligning with goal left"));  break;
+    case Moving_towards_goal:      Serial.println(("Moving towards goal"));       break;
+    }
+  }
 }
+
 
 void setup() {
   initialize_robot();
@@ -176,6 +186,7 @@ void loop() {
     last_valid_yaw = current_yaw;
   }
 
+  
   // Obtain error for PID
   double error = bno.GetError();
 

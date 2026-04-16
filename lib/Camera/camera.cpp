@@ -42,6 +42,7 @@ void camera::process(const String& line) {
   }
 
 
+
     if (_isMirror) {
       goal_angle += 25.0f;
       ball_seen = (fabsf(ang)    > 1e-3f);

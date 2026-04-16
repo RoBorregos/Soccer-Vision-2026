@@ -31,23 +31,23 @@ float goal_and_ball_ang_diff(float goal_ang, float ball_ang ){\
   float g_ang_diff = 0;
   if (goal_ang < 0) {
     if (ball_ang < 0) {
-      g_ang_diff = (fabsf(fabsf(ball_ang) + goal_ang));
+      g_ang_diff = fabsf(fabsf(ball_ang) + goal_ang);
     }
     else {
-      g_ang_diff = (fabsf(goal_ang - ball_ang));
+      g_ang_diff = fabsf(goal_ang - ball_ang);
     }
-    
-
   }
   else {
     if (ball_ang < 0) {
-      g_ang_diff = (fabsf(goal_ang - ball_ang));
+      g_ang_diff = fabsf(goal_ang - ball_ang);
     }
     else {
-      g_ang_diff = (fabsf(ball_ang - goal_ang));
+      g_ang_diff = fabsf(ball_ang - goal_ang);
     }
   }
+  return g_ang_diff;
 }
+
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
   bool frontDetected = phototransistors.isLineDetected(FRONT);
@@ -116,9 +116,10 @@ bool isBallFront() {
 //Function to determine the desired angle based on the goal angle and ball angle, with different logic depending on whether the goal is on the right or left. It also includes an orbiting behavior around the ball when it's in front of the robot but not aligned with the goal.
 void desired_ang_goal(float goal_ang, float ball_ang) {
   Robot_Mode_Infront currentMode; 
+
   if (goal_ang > 0) { // Goal is on the right
     if (ball_ang < -Ball_front_min_lateral_angle) {
-      if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
+      if (goal_and_ball_ang_diff(goal_ang, ball_ang) > Deadband_4_ballgoalangle) { // fabsf(goal_ang - ball_ang)
         currentMode = Aligning_with_goal_right;
         temp_ang = ball_ang - Ball_orbit_offset; // Move left to align the ball
       } else {
@@ -133,9 +134,10 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
       currentMode = Moving_towards_goal;
     }
   }
+
   if (goal_ang < 0) { // Goal is on the left
     if (ball_ang > Ball_front_min_lateral_angle) {
-      if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
+      if (goal_and_ball_ang_diff(goal_ang, ball_ang) > Deadband_4_ballgoalangle) { // fabsf(goal_ang - ball_ang)
         temp_ang = ball_ang + Ball_orbit_offset; // Move right to align the ball
         currentMode = Aligning_with_goal_left;
       } else {
@@ -149,6 +151,7 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
       currentMode = Moving_towards_goal;
     }
   }
+
 }
 
 void setup() {
@@ -160,7 +163,6 @@ void loop() {
   // Read serial lines from both cameras
   frontCam.read();
   mirrorCam.read();
-  
   kicker.update(frontCam.ball_seen && ready_2_shoot, frontCam.ball_distance);
 
   // Get current yaw from BNO
@@ -238,7 +240,7 @@ void loop() {
     if (isBallFront()) {
       desired_ang_goal(frontCam.goal_angle, -frontCam.ball_angle);
       if (fabsf(temp_ang) > 40) {
-        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed + 30, speed_w);
+        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed_lateral_movement, speed_w);
       }
       motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
       if (debug_ball_infront) {
@@ -318,10 +320,10 @@ void loop() {
 
       if (sweepRight) {
         temp_ang = Search_sweep_ang_right;
-        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
+        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed_lateral_movement , speed_w);
       } else {
         temp_ang = Search_sweep_ang_left;
-        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
+        motorss.MoveOmnidirectionalBase((int)temp_ang, Speed_lateral_movement, speed_w);
       }
       if (debug_movement){
         Serial.println("=== Robot Looking for Ball ===");

@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "constantes.h"
 
 camera::camera(HardwareSerial& serial, bool isMirror, bool enemy_yellow)
 : _serial(serial), _isMirror(isMirror), _enemy_yellow(enemy_yellow),
@@ -30,7 +31,7 @@ void camera::process(const String& line) {
                       &dist, &ang, &area, &g_dist, &g_ang, &o_dist, &o_ang);
   if (parsed == 7) {
     ball_distance = dist;   ball_angle = ang;   ball_area = area;
-    if (_enemy_yellow){
+    if (yellow_enemy_goal){
     goal_distance = g_dist; goal_angle = g_ang;
     own_distance  = o_dist; own_angle  = o_ang;
     }

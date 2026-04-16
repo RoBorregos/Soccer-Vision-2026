@@ -25,11 +25,11 @@ PhotoMux::Sensor front[8] = {
   {0, 7}
 };
 
-PhotoMux::Sensor left[8] = {
+PhotoMux::Sensor left[7] = {
+  {2, 0},
   {2, 1},
-  {2, 2},
-  {2, 3},
-  {2, 4}, 
+  {2, 2}, 
+  {2, 4},
   {2, 5},
   {2, 6},
   {2, 7}

@@ -29,8 +29,8 @@ void setup() {
   phototransistors.begin();
   phototransistors.configureSide(FRONT, front, 8);
   phototransistors.configureSide(BACK,  back,  8);
-  phototransistors.configureSide(LEFT,  left,  8);
-  phototransistors.configureSide(RIGHT, right, 8);
+  phototransistors.configureSide(LEFT,  left,  7);
+  phototransistors.configureSide(RIGHT, right, 6);
 
   phototransistors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);
   phototransistors.setThresholdRange(BACK,  BACK_THRESHOLD_MIN, BACK_THRESHOLD_MAX);
@@ -42,9 +42,9 @@ void setup() {
 
 void loop() {
   printSideReadings("FRONT", front, 8, FRONT);
-  printSideReadings("LEFT",  left,  8, LEFT);
+  printSideReadings("LEFT",  left,  7, LEFT);
   printSideReadings("BACK",  back,  8, BACK);
-  printSideReadings("RIGHT", right, 8, RIGHT);
+  printSideReadings("RIGHT", right, 6, RIGHT);
 
   delay(500);
 }

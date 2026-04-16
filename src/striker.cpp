@@ -24,8 +24,9 @@ float temp_ang = 0;
 String serial1_line;
 String serial2_line;
 
-bool ready_2_shoot = false;
+bool ready_2_shoot = true;
 
+float last_valid_goal_angle = 0;
 
 float goal_and_ball_ang_diff(float goal_ang, float ball_ang ){\
   float g_ang_diff = 0;
@@ -51,7 +52,7 @@ float goal_and_ball_ang_diff(float goal_ang, float ball_ang ){\
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
   bool frontDetected = phototransistors.isLineDetected(FRONT);
-  bool leftDetected  = false;//phototransistors.isLineDetected(LEFT);
+  bool leftDetected  = false; //phototransistors.isLineDetected(LEFT);
   bool rightDetected = phototransistors.isLineDetected(RIGHT);
   bool backDetected  = phototransistors.isLineDetected(BACK);
 
@@ -130,7 +131,7 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
       }
     } else {
       bno.SetTarget(goal_ang);
-      temp_ang = goal_ang;
+      temp_ang = ball_ang;
       currentMode = Moving_towards_goal;
     }
   }
@@ -147,7 +148,7 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
       }
     } else {
       bno.SetTarget(goal_ang + Goal_heading_offset_left);
-      temp_ang = goal_ang;
+      temp_ang = ball_ang;
       currentMode = Moving_towards_goal;
     }
   }
@@ -261,7 +262,6 @@ void loop() {
 
 
     } else if (frontCam.ball_seen) {
-      bno
       ; // When ball is seen but not in front, orient towards the ball
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;

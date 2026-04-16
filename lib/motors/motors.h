@@ -33,6 +33,7 @@ public:
     void MoveMotors(int degree, int16_t speed);
     void GetAllSpeeds();
     void MoveOmnidirectionalBase(double degree, int16_t speed, double pid_output);
+    void MotorsHardBreak();
 };
 
 #endif

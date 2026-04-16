@@ -84,6 +84,14 @@ void Motors::MoveBackward()
     back_left.MovePositive();
 }
 
+void Motors::MotorsHardBreak()
+{
+    front_left.MotorHardBreak();
+    front_right.MotorHardBreak();
+    back_right.MotorHardBreak();
+    back_left.MotorHardBreak();
+}
+
 void Motors::Movefront_left() { front_left.MovePositive(); }
 void Motors::Movefront_right() { front_right.MovePositive(); }
 void Motors::Moveback_right() { back_right.MovePositive(); }

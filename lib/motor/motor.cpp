@@ -50,6 +50,12 @@ void Motor::StopMotor()
     digitalWrite(in2_, LOW);
 }
 
+void Motor::MotorHardBreak()
+{
+    digitalWrite(in1_, HIGH);
+    digitalWrite(in2_, HIGH);
+}
+
 uint8_t Motor::GetPwmPin()
 {
     return pwm_pin_;

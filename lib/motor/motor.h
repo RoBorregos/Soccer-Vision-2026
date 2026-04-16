@@ -16,6 +16,7 @@ public:
     void MovePositive();
     void MoveNegative();
     void StopMotor();
+    void MotorHardBreak();
 
     // Control de velocidad (-255 to 255, sign controls direction)
     void SetSpeed(float speed);

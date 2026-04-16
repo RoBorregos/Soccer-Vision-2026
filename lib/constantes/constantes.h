@@ -67,7 +67,7 @@ const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD_MIN = 8000;
+const int FRONT_THRESHOLD_MIN = 7500;
 const int FRONT_THRESHOLD_MAX = 50000;
 
 const int LEFT_THRESHOLD_MIN  = 48000;

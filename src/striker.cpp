@@ -209,40 +209,50 @@ void loop() {
     switch (detectedLineSide) {
       case LINE_FRONT:
         temp_ang = Line_avoid_ang_front;
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
         break;
 
       case LINE_ALL_SIDES:
       case LINE_BOTH_SIDES:
+      motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
 
       case LINE_FRONT_LEFT:
         temp_ang = Line_avoid_ang_front_left;
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
         break;
 
       case LINE_FRONT_RIGHT:
+      
         temp_ang = Line_avoid_ang_front_right;
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
         break;
 
       case LINE_LEFT:
+      
         temp_ang = Line_avoid_ang_left;
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
         break;
 
       case LINE_RIGHT:
         temp_ang = Line_avoid_ang_right;
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
         break;
 
       case LINE_BACK:
         temp_ang = Line_avoid_ang_back;
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase((int)temp_ang, Line_avoid_speed, speed_w);
         break;
 
       default:
+      motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
     }

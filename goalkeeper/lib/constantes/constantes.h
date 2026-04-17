@@ -76,7 +76,7 @@ const int LEFT_THRESHOLD_MAX = 400000000;
 const int RIGHT_THRESHOLD_MIN = 30000;
 const int RIGHT_THRESHOLD_MAX = 500000;
 
-const int BACK_THRESHOLD_MIN  = 75000;
+const int BACK_THRESHOLD_MIN  = 48000;
 const int BACK_THRESHOLD_MAX  = 150000;
 
 // Tiempo de corrección tras detectar línea
@@ -134,7 +134,7 @@ const uint8_t Line_avoid_speed = 185;
 const uint16_t BNO_setup_delay_ms = 300;
 
 //||||| Debuging variables ||||
-const bool debug_line_sensors = false;
+const bool debug_line_sensors = true;
 const bool debug_frontal_camera = true;
 const bool debug_mirror_camera = false;
 const bool debug_bno = true;

@@ -28,7 +28,7 @@ void setup() {
 
   phototransistors.begin();
   phototransistors.configureSide(FRONT, front, 8);
-  phototransistors.configureSide(BACK,  back,  8);
+  phototransistors.configureSide(BACK,  back,  7);
   phototransistors.configureSide(LEFT,  left,  7);
   phototransistors.configureSide(RIGHT, right, 6);
 
@@ -43,7 +43,7 @@ void setup() {
 void loop() {
   printSideReadings("FRONT", front, 8, FRONT);
   printSideReadings("LEFT",  left,  7, LEFT);
-  printSideReadings("BACK",  back,  8, BACK);
+  printSideReadings("BACK",  back,  7, BACK);
   printSideReadings("RIGHT", right, 6, RIGHT);
 
   delay(500);

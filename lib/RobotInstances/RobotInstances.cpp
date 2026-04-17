@@ -25,12 +25,11 @@ PhotoMux::Sensor front[8] = {
   {0, 7}
 };
 
-PhotoMux::Sensor left[7] = {
+PhotoMux::Sensor left[6] = {
   {2, 0},
   {2, 1},
   {2, 2}, 
   {2, 4},
-  {2, 5},
   {2, 6},
   {2, 7}
 };
@@ -44,11 +43,10 @@ PhotoMux::Sensor right[7] = {
   {1, 7}
 };
 
-PhotoMux::Sensor back[8] = {
+PhotoMux::Sensor back[7] = {
   {3, 0}, 
   {3, 1}, 
   {3, 2}, 
-  {3, 3}, 
   {3, 4}, 
   {3, 5}, 
   {3, 6},
@@ -68,8 +66,8 @@ void initialize_robot() {
   phototransistors.begin(); 
   analogReadResolution(12);
   phototransistors.configureSide(FRONT, front, 8);
-  phototransistors.configureSide(BACK, back, 8);
-  phototransistors.configureSide(LEFT, left, 8);
+  phototransistors.configureSide(BACK, back, 7);
+  phototransistors.configureSide(LEFT, left, 6);
   phototransistors.configureSide(RIGHT, right, 6);
 
   phototransistors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);

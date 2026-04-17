@@ -26,11 +26,13 @@ void setup() {
 
 void loop() {
   Serial.println("Testing Motors...");
+  motorss.MoveOmnidirectionalBase(0, Speed, 0);
+  delay(5000);
+  motorss.MoveOmnidirectionalBase(90, Speed, 0);
+  delay(5000);
+  motorss.MoveOmnidirectionalBase(-90, Speed, 0);
+  delay(5000);
+  motorss.MoveOmnidirectionalBase(180, Speed, 0);
+  delay(5000);
 
-  bno.GetBNOData();
-  double error   = bno.GetError();
-  double speed_w = pid.Calculate(error);
-  speed_w = constrain(speed_w, PID_output_min, PID_output_max);
-
-  motorss.MoveOmnidirectionalBase(-90, Speed, speed_w);
 }

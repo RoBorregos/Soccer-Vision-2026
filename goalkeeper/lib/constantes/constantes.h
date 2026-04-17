@@ -22,7 +22,7 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 
 
 //Robot speedbase
-const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed = 160; //Robot speedbase
 const uint8_t Speed_lateral_movement = 180; //Reduced speed for more precise movements, like aligning with the goal
 
 // Motor pins
@@ -73,11 +73,11 @@ const int FRONT_THRESHOLD_MAX = 100000;
 const int LEFT_THRESHOLD_MIN  = 300000000;
 const int LEFT_THRESHOLD_MAX = 400000000;
 
-const int RIGHT_THRESHOLD_MIN = 7000;
-const int RIGHT_THRESHOLD_MAX = 50000;
+const int RIGHT_THRESHOLD_MIN = 30000;
+const int RIGHT_THRESHOLD_MAX = 500000;
 
-const int BACK_THRESHOLD_MIN  = 22000;
-const int BACK_THRESHOLD_MAX  = 100000;
+const int BACK_THRESHOLD_MIN  = 42000;
+const int BACK_THRESHOLD_MAX  = 150000;
 
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;

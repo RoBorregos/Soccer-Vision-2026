@@ -36,10 +36,10 @@ void setup() {
 
 void loop() {
   Serial.println("========================================");
-  //printSideValues("BACK  (MUX 2)", back, 8, BACK);//43000
-  //printSideValues("FRONT (MUX 0)", front, 8, FRONT);//60000
+  printSideValues("BACK  (MUX 2)", back, 8, BACK);//43000
+  printSideValues("FRONT (MUX 0)", front, 8, FRONT);//60000
   printSideValues("LEFT  (MUX 3)", left, 7, LEFT);//20000
-  //printSideValues("RIGHT (MUX 2)", right, 6, RIGHT);//100000
+  printSideValues("RIGHT (MUX 2)", right, 6, RIGHT);//100000
   delay(500);
 
 }

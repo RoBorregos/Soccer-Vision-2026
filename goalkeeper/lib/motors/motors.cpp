@@ -3,6 +3,37 @@
 #include "constantes.h"
 #include <cmath>
 
+// --- Per-motor direction-aware scale factors ---
+// Tune these so the robot drives straight in all four cardinal directions.
+// Start all at 1.0, then adjust based on observed drift.
+// Forward scale applies when the motor is commanded in the positive direction,
+// reverse scale applies when commanded negative.
+static constexpr float K_FL_FWD = 1.05f;
+static constexpr float K_FL_REV = 1.05f;
+
+static constexpr float K_FR_FWD = 1.25f;
+static constexpr float K_FR_REV = 1.10f;
+
+static constexpr float K_BR_FWD = 0.950f;
+static constexpr float K_BR_REV = 0.90f;
+
+static constexpr float K_BL_FWD = 0.95f;
+static constexpr float K_BL_REV = 0.95f;
+
+// Applies a direction-dependent scale factor.
+// v >= 0 uses the forward scale, v < 0 uses the reverse scale.
+// Zero stays zero to avoid motor twitch at rest.
+// Output is clamped to the valid signed PWM range.
+
+static inline float applyDirScale(float v, float k_fwd, float k_rev) {
+    float out = (v > 0.0f) ? v * k_fwd
+              : (v < 0.0f) ? v * k_rev
+                           : 0.0f;
+    if (out >  255.0f) out =  255.0f;
+    if (out < -255.0f) out = -255.0f;
+    return out;
+}
+
 Motors::Motors(uint8_t pwm_pin1, uint8_t in1_1, uint8_t in2_1,
                uint8_t pwm_pin2, uint8_t in1_2, uint8_t in2_2,
                uint8_t pwm_pin3, uint8_t in1_3, uint8_t in2_3,
@@ -95,11 +126,17 @@ void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_ou
 {
     // degree = degree + 90; // Ajuste para que 0° sea hacia adelante
 
-    float Speed_Front_Left = (cos((322.5 + degree) * PI / 180) * speed) + pid_output;
-    float Speed_Front_Right = ((cos((37.5 + degree) * PI / 180) * speed) - pid_output) * 1.5;
-    float Speed_Back_Right = ((cos((142.5 + degree) * PI / 180) * speed) + pid_output )* 1;
-    float Speed_Back_Left = ((cos((217.5 + degree) * PI / 180) * speed) - pid_output)*1.2;
+    // Raw wheel commands from the omni kinematics + heading PID
+    float raw_FL = (cos((322.5 + degree) * PI / 180) * speed) + pid_output;
+    float raw_FR = (cos((37.5  + degree) * PI / 180) * speed) - pid_output;
+    float raw_BR = (cos((142.5 + degree) * PI / 180) * speed) + pid_output;
+    float raw_BL = (cos((217.5 + degree) * PI / 180) * speed) - pid_output;
 
+    // Apply per-motor, per-direction scaling
+    float Speed_Front_Left  = applyDirScale(raw_FL, K_FL_FWD, K_FL_REV);
+    float Speed_Front_Right = applyDirScale(raw_FR, K_FR_FWD, K_FR_REV);
+    float Speed_Back_Right  = applyDirScale(raw_BR, K_BR_FWD, K_BR_REV);
+    float Speed_Back_Left   = applyDirScale(raw_BL, K_BL_FWD, K_BL_REV);
 
     front_left.SetSpeed(Speed_Front_Left);
     front_right.SetSpeed(Speed_Front_Right);

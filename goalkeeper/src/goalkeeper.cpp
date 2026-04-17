@@ -76,15 +76,19 @@ void checkLineSensors() {
 
 //Function that checks if the ball is in front of the robot using the front camera, distance and angle.
 bool isBallFront() {
-  return frontCam.ball_seen
+  return  ((frontCam.ball_seen
       && frontCam.ball_distance < Ball_distance_threshold
-      && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold;
+      && fabsf(frontCam.ball_angle) < Ball_infront_ang_threshold)||((frontCam.ball_seen && frontCam.ball_area > Ball_area_threshold ) && true));//(fabsf(frontCam.ball_angle) > Ball_infront_outwards_treshold)));
 }
 
 
 void desired_ang_goal(float goal_ang, float ball_ang) {
   ball_ang = -ball_ang;
-  Robot_Mode_Infront currentMode; 
+  Robot_Mode_Infront currentMode;
+  if (goal_ang == 0) {
+    temp_ang = -frontCam.ball_angle;
+    return;
+  }
   if (goal_ang > 0) { // Goal is on the right
     if (ball_ang < -Ball_front_min_lateral_angle) {
       if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
@@ -109,7 +113,6 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
   if (goal_ang < 0) { // Goal is on the left
     if (ball_ang > Ball_front_min_lateral_angle) {
       if (fabsf(goal_ang - ball_ang) > Deadband_4_ballgoalangle) {
-      if (fabsf(fabsf(goal_ang) - fabsf(ball_ang)) > Deadband_4_ballgoalangle) {
         temp_ang = ball_ang + Ball_orbit_offset; // Move right to align the ball
         currentMode = Aligning_with_goal_left;
         ready_2_shoot = false;
@@ -125,7 +128,6 @@ void desired_ang_goal(float goal_ang, float ball_ang) {
       currentMode = Moving_towards_goal;
       ready_2_shoot = true;
     }
-  }
   }
 }
 
@@ -174,6 +176,8 @@ void loop() {
   // Check line sensors — maximum priority
   checkLineSensors();
 
+
+  //LOGIC FOR LINE AVOIDANCE AND MOVEMENTS
   if (isAvoidingLine) {
     switch (detectedLineSide) {
       case LINE_FRONT:
@@ -216,6 +220,9 @@ void loop() {
         break;
     }
 
+
+    //Rest of the code
+
   } else {
 
     motorss.SetAllSpeeds(Speed);
@@ -223,7 +230,7 @@ void loop() {
     if (frontCam.ball_seen) {
       float ang = -frontCam.ball_angle;
 
-      if (frontCam.ball_distance >= 160) {
+      if (frontCam.ball_area <= 50) {
         bno.SetTarget(0.0f);
         if (ang > 7.0f) {
           temp_ang = 90;
@@ -236,6 +243,10 @@ void loop() {
         }
         if (debug_frontal_camera) Serial.println("Modo: Tracking Lateral (Distancia > 200)");
       } else {
+        if (frontCam.ball_area > 50) {
+          motorss.MoveOmnidirectionalBase(ang, Speed_lateral_movement, speed_w);
+        }
+
         if (isBallFront()) {
           desired_ang_goal(frontCam.goal_angle, frontCam.ball_angle);
           motorss.MoveOmnidirectionalBase((int)temp_ang, Speed, speed_w);
@@ -248,6 +259,10 @@ void loop() {
             Serial.println(frontCam.goal_angle);
             Serial.print("Ball angle: ");
             Serial.println(frontCam.ball_angle);
+            Serial.print("Ball distance: ");
+            Serial.println(frontCam.ball_distance);
+            Serial.print("Ball area: ");
+            Serial.println(frontCam.ball_area);
           }
         } else {
           if (debug_frontal_camera) {
@@ -258,6 +273,8 @@ void loop() {
             Serial.println(frontCam.goal_angle);
             Serial.print("Ball distance: ");
             Serial.println(frontCam.ball_distance);
+            Serial.print("Ball area: ");
+            Serial.println(frontCam.ball_area);
           }
         }
       }

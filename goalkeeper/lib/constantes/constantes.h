@@ -24,7 +24,7 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 //Robot speedbase
 const uint8_t Speed = 160; //Robot speedbase
 const uint8_t Speed_lateral_movement = 180; //Reduced speed for more precise movements, like aligning with the goal
-
+const float Ball_area_threshold = 700.0f; // Threshold for ball area to consider it in front, regardless of angle
 // Motor pins
 const int BACK_RIGHT_IN1 = 33;
 const int BACK_RIGHT_IN2 = 34;
@@ -73,11 +73,11 @@ const int FRONT_THRESHOLD_MAX = 100000;
 const int LEFT_THRESHOLD_MIN  = 300000000;
 const int LEFT_THRESHOLD_MAX = 400000000;
 
-const int RIGHT_THRESHOLD_MIN = 30000;
+const int RIGHT_THRESHOLD_MIN = 35000;
 const int RIGHT_THRESHOLD_MAX = 500000;
 
-const int BACK_THRESHOLD_MIN  = 48000;
-const int BACK_THRESHOLD_MAX  = 150000;
+const int BACK_THRESHOLD_MIN  = 25000;
+const int BACK_THRESHOLD_MAX  = 100000;
 
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;
@@ -134,10 +134,10 @@ const uint8_t Line_avoid_speed = 185;
 const uint16_t BNO_setup_delay_ms = 300;
 
 //||||| Debuging variables ||||
-const bool debug_line_sensors = true;
+const bool debug_line_sensors = false;
 const bool debug_frontal_camera = true;
 const bool debug_mirror_camera = false;
-const bool debug_bno = true;
+const bool debug_bno = false;
 const bool debug_photomux = false;
 const bool debug_movement = false;
 const bool debug_ball_infront = true;

@@ -1,12 +1,13 @@
 #include "camera.h"
+#include "constantes.h"
 
 camera::camera(HardwareSerial& serial, bool isMirror, bool enemy_yellow)
 : _serial(serial), _isMirror(isMirror), _enemy_yellow(enemy_yellow),
-    ball_distance(0), ball_angle(0),
+    ball_distance(0), ball_angle(0), ball_area(0),
     goal_distance(0), goal_angle(0),
     own_distance(0),  own_angle(0),
     ball_seen(false), goal_seen(false), own_seen(false),
-    _buffer{0}, _bufferIndex(0)
+    _buffer("")
 {
 }
 
@@ -15,26 +16,22 @@ void camera::read() {
     char c = (char)_serial.read();
     if (c == '\r') continue;
     if (c == '\n') {
-      _buffer[_bufferIndex] = '\0';
       process(_buffer);
-      _bufferIndex = 0;
+      _buffer = "";
     } else {
-      if (_bufferIndex < (BUFFER_SIZE - 1)) {
-        _buffer[_bufferIndex++] = c;
-      } else {
-        _bufferIndex = 0;
-      }
+      _buffer += c;
+      if (_buffer.length() > 120) _buffer = "";
     }
   }
 }
 
-void camera::process(const char* line) {
-  float dist, ang, g_dist, g_ang, o_dist, o_ang;
-  int parsed = sscanf(line, "%f %f %f %f %f %f",
-                      &dist, &ang, &g_dist, &g_ang, &o_dist, &o_ang);
-  if (parsed == 6) {
-    ball_distance = dist;   ball_angle = ang;
-    if (_enemy_yellow){
+void camera::process(const String& line) {
+  float dist, ang, area, g_dist, g_ang, o_dist, o_ang;
+  int parsed = sscanf(line.c_str(), "%f %f %f %f %f %f %f",
+                      &dist, &ang, &area, &g_dist, &g_ang, &o_dist, &o_ang);
+  if (parsed == 7) {
+    ball_distance = dist;   ball_angle = ang;   ball_area = area;
+    if (yellow_enemy_goal){
     goal_distance = g_dist; goal_angle = g_ang;
     own_distance  = o_dist; own_angle  = o_ang;
     }
@@ -43,6 +40,7 @@ void camera::process(const char* line) {
     own_distance  = g_dist; own_angle  = g_ang;
 
   }
+
 
 
     if (_isMirror) {

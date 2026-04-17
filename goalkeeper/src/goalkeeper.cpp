@@ -24,7 +24,7 @@ unsigned long lastHeartbeatMs = 0;
 
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
-  bool frontDetected = false;
+  bool frontDetected = phototransistors.isLineDetected(FRONT);
   bool leftDetected  = false;
   bool rightDetected = phototransistors.isLineDetected(RIGHT);
   bool backDetected  = phototransistors.isLineDetected(BACK);

@@ -74,7 +74,7 @@ void initialize_robot() {
   phototransistors.begin(); 
   analogReadResolution(12);
   Serial.println("[INIT] PhotoMux begin listo");
-  phototransistors.configureSide(FRONT, front, 7);
+  phototransistors.configureSide(FRONT, front, 4);
   phototransistors.configureSide(BACK, back, 8);
   phototransistors.configureSide(LEFT, left, 8);
   phototransistors.configureSide(RIGHT, right, 8);

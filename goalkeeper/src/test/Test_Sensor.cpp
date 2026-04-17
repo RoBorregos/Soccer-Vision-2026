@@ -24,7 +24,7 @@ void setup() {
   analogReadResolution(12);
 
   sensors.begin();
-  sensors.configureSide(FRONT, front, 8);
+  sensors.configureSide(FRONT, front, 4;
   sensors.configureSide(BACK,  back,  8);
   sensors.configureSide(LEFT,  left,  8);
   sensors.configureSide(RIGHT, right, 8);
@@ -38,7 +38,7 @@ void setup() {
 }
 
 void loop() {
-  printSideReadings("FRONT", front, 8);
+  printSideReadings("FRONT", front, 4);
   printSideReadings("LEFT",  left,  8);
   printSideReadings("BACK",  back,  8);
   printSideReadings("RIGHT", right, 8);

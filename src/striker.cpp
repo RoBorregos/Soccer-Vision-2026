@@ -106,6 +106,15 @@ void checkLineSensors() {
   }
 }
 
+float calcularAnguloMovimiento(float ball_angle_deg) {
+  if (ball_angle_deg > 180.0f) ball_angle_deg -= 360.0f;
+  if (fabsf(ball_angle_deg) < 15.0f) return ball_angle_deg;
+  if (ball_angle_deg > 0.0f)
+    return ball_angle_deg + 30.0f + (ball_angle_deg * 0.4f);
+  else
+    return ball_angle_deg - 30.0f + (ball_angle_deg * 0.4f);
+}
+
 //Function that checks if the ball is in front of the robot using the front camera, distance and angle.
 bool isBallFront() {
   return  ((frontCam.ball_seen
@@ -283,12 +292,13 @@ void loop() {
 
 
     } else if (frontCam.ball_seen) {
-      ; // When ball is seen but not in front, orient towards the ball
+      // When ball is seen but not in front, orient towards the ball
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
       ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
-      float x = constrain(ang / Ball_front_angle_clamp, -1.0, 1.0);
-      motorss.MoveOmnidirectionalBase((int)ang, Speed, speed_w);
+      float move_ang = calcularAnguloMovimiento(ang);
+      move_ang = constrain(move_ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
+      motorss.MoveOmnidirectionalBase((int)move_ang, Speed, speed_w);
       
       
       if (debug_frontal_camera){

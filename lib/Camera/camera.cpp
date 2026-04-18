@@ -45,14 +45,14 @@ void camera::process(const String& line) {
 
     if (_isMirror) {
       goal_angle += 25.0f;
-      ball_seen = (fabsf(ang)    > 1e-3f);
-      goal_seen = (fabsf(g_dist) > 1e-3f);
-      own_seen  = (fabsf(o_dist) > 1e-3f);
+      ball_seen = (fabsf(ang)          > 1e-3f);
+      goal_seen = (fabsf(goal_distance) > 1e-3f);
+      own_seen  = (fabsf(own_distance)  > 1e-3f);
     } else {
       goal_angle = -goal_angle;
-      ball_seen = (fabsf(dist)   > 1e-3f);
-      goal_seen = (fabsf(g_dist) > 1e-3f);
-      own_seen  = (fabsf(o_dist) > 1e-3f);
+      ball_seen = (fabsf(dist)          > 1e-3f);
+      goal_seen = (fabsf(goal_distance) > 1e-3f);
+      own_seen  = (fabsf(own_distance)  > 1e-3f);
     }
   }
 }

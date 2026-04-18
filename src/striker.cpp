@@ -51,9 +51,9 @@ float goal_and_ball_ang_diff(float goal_ang, float ball_ang ){\
 
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
-  bool frontDetected = false;
+  bool frontDetected = phototransistors.isLineDetected(FRONT); //phototransistors.isLineDetected(FRONT);
   bool leftDetected  = phototransistors.isLineDetected(LEFT); //phototransistors.isLineDetected(LEFT);
-  bool rightDetected = false;
+  bool rightDetected = phototransistors.isLineDetected(RIGHT); //phototransistors.isLineDetected(RIGHT);
   bool backDetected  = phototransistors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {

@@ -22,11 +22,20 @@ float temp_ang = 0;
 bool ready_2_shoot = false;
 unsigned long lastHeartbeatMs = 0;
 
+float calcularAnguloMovimiento(float ball_angle_deg) {
+  if (ball_angle_deg > 180.0f) ball_angle_deg -= 360.0f;
+  if (fabsf(ball_angle_deg) < 15.0f) return ball_angle_deg;
+  if (ball_angle_deg > 0.0f)
+    return ball_angle_deg + 30.0f + (ball_angle_deg * 0.4f);
+  else
+    return ball_angle_deg - 30.0f + (ball_angle_deg * 0.4f);
+}
+
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
   bool frontDetected = false;
   bool leftDetected  = false;
-  bool rightDetected = phototransistors.isLineDetected(RIGHT);
+  bool rightDetected = false;
   bool backDetected  = phototransistors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
@@ -244,6 +253,7 @@ void loop() {
         if (debug_frontal_camera) Serial.println("Modo: Tracking Lateral (Distancia > 200)");
       } else {
         if (frontCam.ball_area > 50) {
+          ang = calcularAnguloMovimiento(-frontCam.ball_angle);
           motorss.MoveOmnidirectionalBase(ang, Speed_lateral_movement, speed_w);
         }
 
@@ -310,7 +320,7 @@ void loop() {
       }
 
     } else {
-        motorss.MoveOmnidirectionalBase(0, 0, speed_w);
+        motorss.MoveOmnidirectionalBase(180, 65 , speed_w);
         if (debug_movement) {
         Serial.println("BAll not detected, static position");
       }

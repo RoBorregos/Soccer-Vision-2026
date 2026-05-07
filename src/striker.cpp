@@ -54,7 +54,7 @@ void checkLineSensors() {
   bool frontDetected = phototransistors.isLineDetected(FRONT); //phototransistors.isLineDetected(FRONT);
   bool leftDetected  = phototransistors.isLineDetected(LEFT); //phototransistors.isLineDetected(LEFT);
   bool rightDetected = phototransistors.isLineDetected(RIGHT); //phototransistors.isLineDetected(RIGHT);
-  bool backDetected  = phototransistors.isLineDetected(BACK);
+  bool backDetected  = false;
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
 

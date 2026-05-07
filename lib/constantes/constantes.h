@@ -160,5 +160,5 @@ enum Robot_Mode_Mirror {
 };
 
 //boolean for blue and yellow goal exchange
-const bool yellow_enemy_goal = false;
+const bool yellow_enemy_goal = true;
 #endif

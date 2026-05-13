@@ -106,7 +106,7 @@ void checkLineSensors() {
   }
 }
 
-float calcularAnguloMovimiento(float ball_angle_deg) {
+float calculateAngularMovement(float ball_angle_deg) {
   if (ball_angle_deg > 180.0f) ball_angle_deg -= 360.0f;
   if (fabsf(ball_angle_deg) < 15.0f) return ball_angle_deg;
   if (ball_angle_deg > 0.0f)
@@ -224,7 +224,7 @@ void loop() {
 
       case LINE_ALL_SIDES:
       case LINE_BOTH_SIDES:
-      motorss.MotorsHardBreak();
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
 
@@ -261,7 +261,7 @@ void loop() {
         break;
 
       default:
-      motorss.MotorsHardBreak();
+        motorss.MotorsHardBreak();
         motorss.MoveOmnidirectionalBase(180, Line_avoid_speed, speed_w);
         break;
     }
@@ -296,7 +296,7 @@ void loop() {
       float ang = -frontCam.ball_angle;
       if (fabsf(ang) < Ball_front_angle_deadband) ang = 0.0f;
       ang = constrain(ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
-      float move_ang = calcularAnguloMovimiento(ang);
+      float move_ang = calculateAngularMovement(ang);
       move_ang = constrain(move_ang, -Ball_front_angle_clamp, Ball_front_angle_clamp);
       motorss.MoveOmnidirectionalBase((int)move_ang, Speed, speed_w);
       

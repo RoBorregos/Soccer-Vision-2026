@@ -16,9 +16,10 @@ public:
     void MovePositive();
     void MoveNegative();
     void StopMotor();
+    void MotorHardBreak();
 
-    // Control de velocidad (0–255)
-    void SetSpeed(uint8_t speed);
+    // Control de velocidad (-255 to 255, sign controls direction)
+    void SetSpeed(float speed);
 
     // Getters útiles para debug
     uint8_t GetPwmPin();

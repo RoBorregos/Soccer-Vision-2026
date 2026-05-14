@@ -22,13 +22,13 @@ const float Yaw_last_valid_min_change  = 1.0;   // Minimum last yaw magnitude th
 
 
 //Robot speedbase
-const uint8_t Speed = 90; //Robot speedbase
-const uint8_t Speed_lateral_movement = 110; //Reduced speed for more precise movements, like aligning with the goal
+const uint8_t Speed = 120; //Robot speedbase
+const uint8_t Speed_lateral_movement = 130; //Reduced speed for more precise movements, like aligning with the goal
 
 // Motor pins
-const int BACK_RIGHT_IN1 = 10;
-const int BACK_RIGHT_IN2 = 11;
-const int BACK_RIGHT_PWM = 12;
+const int BACK_RIGHT_IN1 = 34;
+const int BACK_RIGHT_IN2 = 33;
+const int BACK_RIGHT_PWM = 4;
 
 const int BACK_LEFT_IN1  = 31;
 const int BACK_LEFT_IN2  = 30;
@@ -38,8 +38,8 @@ const int FRONT_RIGHT_IN1 = 35;
 const int FRONT_RIGHT_IN2 = 36;
 const int FRONT_RIGHT_PWM = 5;
 
-const int FRONT_LEFT_IN1  = 28;
-const int FRONT_LEFT_IN2  = 29;
+const int FRONT_LEFT_IN1  = 29;
+const int FRONT_LEFT_IN2  = 28;
 const int FRONT_LEFT_PWM  = 2;
 
 // Search sweep lateral angles
@@ -58,20 +58,26 @@ const int servo_mid = 1300;
 const int servo_max = 1600;
 
 //Vision Tresholds
-const float Ball_distance_threshold   = 125.0f; // Distance threshold to consider the ball is in front of the robot
+const float Ball_distance_threshold   = 160.0f; // Distance threshold to consider the ball is in front of the robot
 const float Ball_infront_ang_threshold = 25.0f; // Angle threshold to consider the ball is in front of the robot
-const float Deadband_4_ballgoalangle  = 5.0f;  // Deadband for ball-goal angle when the ball is in front
+const float Deadband_4_ballgoalangle  = 10.0f;  // Deadband for ball-goal angle when the ball is in front
 
 // PhotoMux pins
 const uint8_t selectPins[3] = {16, 15, 14};       // S0, S1, S2
 const uint8_t muxPins[4]    = {A6, A7, A9, A14};  // Un pin analógico por chip mux
 
 // Thresholds para detección de línea
-const int FRONT_THRESHOLD = 14000;
-const int LEFT_THRESHOLD  = 50000;
-const int RIGHT_THRESHOLD = 30000;
-const int BACK_THRESHOLD  = 80000;
+const int FRONT_THRESHOLD_MIN = 9000;
+const int FRONT_THRESHOLD_MAX = 300000;
 
+const int LEFT_THRESHOLD_MIN  = 10000;
+const int LEFT_THRESHOLD_MAX = 100000;
+
+const int RIGHT_THRESHOLD_MIN = 14500;
+const int RIGHT_THRESHOLD_MAX = 150000;
+
+const int BACK_THRESHOLD_MIN  = 2200;
+const int BACK_THRESHOLD_MAX  = 100000;
 // Tiempo de corrección tras detectar línea
 const unsigned long correctionTime = 300;
 
@@ -79,9 +85,10 @@ const unsigned long correctionTime = 300;
 //Variables for front
 const float Ball_front_angle_deadband = 6.0f;
 const float Ball_front_angle_clamp = 90.0f;
-const float Kick_ball_distance_very_close = 70.0f;
-
-
+const float Kick_ball_distance_very_close = 70;
+const float Ball_area_threshold = 700.0f; // Threshold for ball area to consider it in front, regardless of angle
+// Threshold for ball area to consider it in front, regardless of angle
+const float Ball_infront_outwards_treshold = 25.0f; // Threshold for ball angle when it's in front but moving outward
 //Kicker timing
 const unsigned long Kicker_pulse_ms = 70;
 const unsigned long Kicker_cooldown_ms = 5000;
@@ -91,7 +98,7 @@ const float Goal_heading_offset_right =  10.0f; // Added when goal is on the rig
 const float Goal_heading_offset_left  = -10.0f; // Added when goal is on the left
 
 //Variables for alining ball with goal
-const float Ball_orbit_offset = 80.0f;
+const float Ball_orbit_offset = 70.0f;
 const float Ball_front_min_lateral_angle = -10.0f;
 
 
@@ -104,6 +111,7 @@ const float Mirror_ball_left_ang_max  = -135.0f;
 
 const float Mirror_ball_flank_offset = 30.0f;
 const float Mirror_ball_behind_ang = 125.0f;
+const float Mirror_ball_angle_deadband = 25.0f;
 const unsigned long Search_sweep_interval_ms = 1000;
 
 
@@ -128,7 +136,7 @@ const uint16_t BNO_setup_delay_ms = 300;
 
 //||||| Debuging variables ||||
 const bool debug_line_sensors = true;
-const bool debug_frontal_camera = false;
+const bool debug_frontal_camera = true;
 const bool debug_mirror_camera = false;
 const bool debug_bno = false;
 const bool debug_photomux = false;

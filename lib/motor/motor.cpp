@@ -18,12 +18,18 @@ void Motor::InitializeMotor()
     pinMode(pwm_pin_, OUTPUT);
 }
 
-void Motor::SetSpeed(uint8_t speed)
+
+void Motor::SetSpeed(float speed)
 {
-    (speed >= 0) ? MovePositive(): MoveNegative();
-    constrain(abs((int)speed), 0, 255);
-    analogWrite(pwm_pin_, speed);
-    
+    if (speed >= 0) {
+        MovePositive();
+    } else {
+        MoveNegative();
+    }
+
+    int pwm = constrain((int)abs(speed), 0, 255);
+    // Cast only here, at the hardware boundary
+    analogWrite(pwm_pin_, pwm);
 }
 
 void Motor::MovePositive()
@@ -42,6 +48,12 @@ void Motor::StopMotor()
 {
     digitalWrite(in1_, LOW);
     digitalWrite(in2_, LOW);
+}
+
+void Motor::MotorHardBreak()
+{
+    digitalWrite(in1_, HIGH);
+    digitalWrite(in2_, HIGH);
 }
 
 uint8_t Motor::GetPwmPin()

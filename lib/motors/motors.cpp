@@ -84,6 +84,14 @@ void Motors::MoveBackward()
     back_left.MovePositive();
 }
 
+void Motors::MotorsHardBreak()
+{
+    front_left.MotorHardBreak();
+    front_right.MotorHardBreak();
+    back_right.MotorHardBreak();
+    back_left.MotorHardBreak();
+}
+
 void Motors::Movefront_left() { front_left.MovePositive(); }
 void Motors::Movefront_right() { front_right.MovePositive(); }
 void Motors::Moveback_right() { back_right.MovePositive(); }
@@ -91,7 +99,7 @@ void Motors::Moveback_left() { back_left.MovePositive(); }
 
 // This is the main function for moving the robot in any direction, it calculates the necessary speed and direction of each wheel and adds
 // the PID for the robot to move in the desired direction while looking at 0 degrees
-void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_output)
+void Motors::MoveOmnidirectionalBase(double degree, int16_t speed, double pid_output)
 {
     // degree = degree + 90; // Ajuste para que 0° sea hacia adelante
 
@@ -99,6 +107,7 @@ void Motors::MoveOmnidirectionalBase(double degree, uint8_t speed, double pid_ou
     float Speed_Front_Right = (cos((37.5 + degree) * PI / 180) * speed) - pid_output;
     float Speed_Back_Right = (cos((142.5 + degree) * PI / 180) * speed) + pid_output;
     float Speed_Back_Left = (cos((217.5 + degree) * PI / 180) * speed) - pid_output;
+    
 
 
     front_left.SetSpeed(Speed_Front_Left);

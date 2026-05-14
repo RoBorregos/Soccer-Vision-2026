@@ -12,6 +12,11 @@ PhotoMux::PhotoMux(const uint8_t selectPins[3], const uint8_t muxPins[4]) {
     backSensors = nullptr;
 
     frontCount = leftCount = rightCount = backCount = 0;
+
+    for (uint8_t side = 0; side < 4; side++) {
+        minThresholds[side] = 0;
+        maxThresholds[side] = INT_MAX;
+    }
 }
 
 // - Setup mux select pins as outputs
@@ -34,9 +39,10 @@ void PhotoMux::configureSide(Side side, const Sensor* sensors, uint8_t count) {
     }
 }
 
-// - Adjust threshold for side
-void PhotoMux::setThreshold(Side side, int threshold) {
-    thresholds[side] = threshold;
+// - Adjust threshold range for side
+void PhotoMux::setThresholdRange(Side side, int minThreshold, int maxThreshold) {
+    minThresholds[side] = minThreshold;
+    maxThresholds[side] = maxThreshold;
 }
 
 // - Set mux select lines for desired channel
@@ -83,7 +89,8 @@ float PhotoMux::getRawAverage(Side side) {
 
 // - Line detection: compare average to threshold
 bool PhotoMux::isLineDetected(Side side) {
-    return getAverage(side) > thresholds[side];
+    float average = getAverage(side);
+    return average >= minThresholds[side] && average <= maxThresholds[side];
 }
 
 // - Read sensors directly (no mux) and compute average

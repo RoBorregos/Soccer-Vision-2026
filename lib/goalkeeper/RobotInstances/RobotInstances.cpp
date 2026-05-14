@@ -1,0 +1,89 @@
+#include "RobotInstances.h"
+BNO085 bno;
+PID pid(p, i, d, pid_max_output);
+Motors motorss(
+  FRONT_LEFT_PWM, FRONT_LEFT_IN1, FRONT_LEFT_IN2,
+  FRONT_RIGHT_PWM, FRONT_RIGHT_IN1, FRONT_RIGHT_IN2,
+  BACK_RIGHT_PWM, BACK_RIGHT_IN1, BACK_RIGHT_IN2,
+  BACK_LEFT_PWM, BACK_LEFT_IN1, BACK_LEFT_IN2
+);
+camera frontCam(Serial1);
+camera mirrorCam(Serial2, true);
+
+PhotoMux phototransistors(selectPins, muxPins);  // <- AGREGA ESTA LÍNEA
+
+Kicker kicker(KICKER_PIN, Kick_ball_distance_very_close, Kicker_pulse_ms, Kicker_cooldown_ms);
+
+PhotoMux::Sensor front[4] = {
+  {2, 0},
+  {2, 2},
+  {2, 4}, 
+  {2, 6},
+};
+
+
+
+PhotoMux::Sensor left[8] = {
+  {0, 0},
+  {0, 1},
+  {0, 2}, 
+  {0, 3}, 
+  {0, 4}, 
+  {0, 5},
+  {0, 6},
+  {0, 7}
+};
+
+PhotoMux::Sensor right[8] = {
+  {3, 0}, 
+  {3, 1},
+  {3, 2},
+  {3, 3}, 
+  {3, 4}, 
+  {3, 5},
+  {3, 6}, 
+  {3, 7}
+};
+
+PhotoMux::Sensor back[8] = {
+  {1, 0}, 
+  {1, 1}, 
+  {1, 2}, 
+  {1, 3}, 
+  {1, 4}, 
+  {1, 5}, 
+  {1, 6},
+  {1, 7}
+};
+
+void initialize_robot() {
+  Serial.begin(115200);
+  Serial.println("[INIT] Serial listo");
+  Serial1.begin(115200);
+  Serial2.begin(115200);
+  Serial.println("[INIT] Camaras serial listas");
+  bno.InitializeBNO();
+  bno.GetBNOData();
+  Serial.println("[INIT] BNO listo");
+  motorss.InitializeMotors();
+  Serial.println("[INIT] Motores listos");
+  pinMode(KICKER_PIN, OUTPUT);
+  digitalWrite(KICKER_PIN, LOW);
+  Serial.println("[INIT] Kicker listo");
+  //Photosensors
+  phototransistors.begin(); 
+  analogReadResolution(12);
+  Serial.println("[INIT] PhotoMux begin listo");
+  phototransistors.configureSide(FRONT, front, 4);
+  phototransistors.configureSide(BACK, back, 8);
+  phototransistors.configureSide(LEFT, left, 8);
+  phototransistors.configureSide(RIGHT, right, 8);
+  Serial.println("[INIT] Lados PhotoMux configurados");
+
+  phototransistors.setThresholdRange(FRONT, FRONT_THRESHOLD_MIN, FRONT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(LEFT,  LEFT_THRESHOLD_MIN, LEFT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(RIGHT, RIGHT_THRESHOLD_MIN, RIGHT_THRESHOLD_MAX);
+  phototransistors.setThresholdRange(BACK,  BACK_THRESHOLD_MIN, BACK_THRESHOLD_MAX);
+  Serial.println("[INIT] Thresholds PhotoMux listos");
+  Serial.println("[INIT] Robot inicializado completo");
+}

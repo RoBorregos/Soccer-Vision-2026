@@ -38,8 +38,8 @@ const int FRONT_RIGHT_IN1 = 35;
 const int FRONT_RIGHT_IN2 = 36;
 const int FRONT_RIGHT_PWM = 5;
 
-const int FRONT_LEFT_IN1  = 28;
-const int FRONT_LEFT_IN2  = 29;
+const int FRONT_LEFT_IN1  = 29;
+const int FRONT_LEFT_IN2  = 28;
 const int FRONT_LEFT_PWM  = 2;
 
 // Search sweep lateral angles

@@ -27,17 +27,6 @@ void setup() {
 // Buffers serial
 void loop() {
   Serial.println("Testing Motors...");
-  //motorss.MoveMotor1();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveMotor2();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveMotor3();
-  //delay(1000);
-  //motorss.StopMotors();
-  //motorss.MoveMotor4();
-  //delay(1000);
   //motorss.StopMotors();
   //motorss.MoveForward();
   //delay(1000);

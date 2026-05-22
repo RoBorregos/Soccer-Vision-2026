@@ -1,13 +1,15 @@
 #include "camera.h"
 #include "constantes.h"
 
-camera::camera(HardwareSerial& serial, bool isMirror, bool enemy_yellow)
-: _serial(serial), _isMirror(isMirror), _enemy_yellow(enemy_yellow),
-    ball_distance(0), ball_angle(0), ball_area(0),
+camera::camera(HardwareSerial& serial, bool isMirror)
+:   ball_distance(0), ball_angle(0), ball_area(0),
     goal_distance(0), goal_angle(0),
     own_distance(0),  own_angle(0),
     ball_seen(false), goal_seen(false), own_seen(false),
-    _buffer("")
+    last_valid_goal_angle(0),
+    _serial(serial),
+    _buffer(""),
+    _isMirror(isMirror)
 {
 }
 

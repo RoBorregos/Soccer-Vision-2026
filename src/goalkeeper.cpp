@@ -33,9 +33,9 @@ float calcularAnguloMovimiento(float ball_angle_deg) {
 
 //Function that calls a boolean method of class sensors, stores it in variable, possible cases for line detection and time management for line avoidance
 void checkLineSensors() {
-  bool frontDetected = false;
-  bool leftDetected  = false;
-  bool rightDetected = false;
+  bool frontDetected = phototransistors.isLineDetected(FRONT); 
+  bool leftDetected  = phototransistors.isLineDetected(LEFT); 
+  bool rightDetected = phototransistors.isLineDetected(RIGHT); 
   bool backDetected  = phototransistors.isLineDetected(BACK);
 
   if (frontDetected || leftDetected || rightDetected || backDetected) {
